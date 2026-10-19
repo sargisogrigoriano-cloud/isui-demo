@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ISUI — Electronic Management of Irrigation &amp; Melioration</title>
+<title>IMIS — Irrigation Management Information System</title>
 <style>
   :root{--bg:#0a141d;--card:#13283a;--line:#1e3d55;--ink:#eaf3fb;--mut:#9fb8cc;--accent:#39b7e6;--accent2:#2bd4a7}
   *{box-sizing:border-box} html,body{margin:0;padding:0}
@@ -52,12 +52,12 @@
 <body>
 <header class="top"><div class="wrap">
   <div class="badge">Guided product tour</div>
-  <h1><span>ISUI</span> — Electronic Management of Irrigation &amp; Melioration</h1>
+  <h1><span>IMIS</span> — Irrigation Management Information System</h1>
 </div></header>
 
 <main class="wrap">
   <div class="stage">
-    <img class="slideimg" id="img" alt="ISUI screen">
+    <img class="slideimg" id="img" alt="IMIS screen">
     <div class="cap">
       <div class="k"><span class="num" id="num">1 / 18</span><h2 id="title"></h2></div>
       <p id="narr"></p>
@@ -72,7 +72,7 @@
   <div class="dots" id="dots"></div>
 
   <section class="qa" id="ask">
-    <h2>Ask anything about ISUI <span class="pill">free · live</span></h2>
+    <h2>Ask anything about IMIS <span class="pill">free · live</span></h2>
     <p class="hint">A free assistant answers any question about the system.</p>
     <div class="row">
       <input type="text" id="q" placeholder="e.g. How is a farmer's debt calculated?" autocomplete="off">
@@ -84,25 +84,25 @@
   </section>
 </main>
 
-<footer><div class="wrap">ISUI — real system walkthrough · free assistant. <span id="brainstat"></span></div></footer>
+<footer><div class="wrap">IMIS — real system walkthrough · free assistant. <span id="brainstat"></span></div></footer>
 
 <script>
 const BRAIN="https://flour-tackle-illustrated-adelaide.trycloudflare.com";
 const SLIDES=[
- {img:"slides/00-login.png",t:"What is ISUI, and why it matters",n:"This is ISUI — the Integrated System for Irrigation Water Management of the Agency of Melioration and Irrigation. It replaces paper and spreadsheets with one transparent platform that runs the entire irrigation water cycle: who receives water, how much, when, and how it is metered, billed and collected. Everyone — from a single farmer to the national agency — signs in by their own role and sees exactly what they are allowed to."},
+ {img:"slides/00-login.png",t:"What is IMIS, and why it matters",n:"This is IMIS — the Irrigation Management Information System of the Agency of Melioration and Irrigation of Tajikistan. It replaces paper and spreadsheets with one transparent platform that runs the entire irrigation water cycle: who receives water, how much, when, and how it is metered, billed and collected. Everyone — from a single farmer to the national agency — signs in by their own role and sees exactly what they are allowed to."},
  {img:"slides/01-dashboard.png",t:"Dashboard — the whole picture",n:"After signing in, each organization gets its own dashboard: registered accounts, water planned and delivered, the collection rate, outstanding debt and losses, plus the health of every service. It is the single place to understand, at a glance, how the whole system is performing today."},
- {img:"slides/02-structure.png",t:"Organization structure & hierarchy",n:"Water management is organized as a hierarchy — water-user associations under district authorities, under basin authorities and the national agency. ISUI holds this full structure of 164 organizations, so plans and actual figures roll up automatically from a single plot all the way to the national level."},
+ {img:"slides/02-structure.png",t:"Organization structure & hierarchy",n:"Water management is organized as a hierarchy — water-user associations under district authorities, under basin authorities and the national agency. IMIS holds this full structure of 164 organizations, so plans and actual figures roll up automatically from a single plot all the way to the national level."},
  {img:"slides/03-users.png",t:"Water users & associations",n:"Every farm and water user is registered here with its plots, area and crops, managed by its association. This registry is the foundation of everything — planning, delivery and billing all start from who the water users are and what they farm."},
- {img:"slides/04-plots.png",t:"Plots, crops & areas",n:"For each plot ISUI records the crop and the exact area. The crop, together with the plot's hydromodule zone, sets the water norm — how much water that land needs — which is what drives the irrigation plan."},
+ {img:"slides/04-plots.png",t:"Plots, crops & areas",n:"For each plot IMIS records the crop and the exact area. The crop, together with the plot's hydromodule zone, sets the water norm — how much water that land needs — which is what drives the irrigation plan."},
  {img:"slides/05-map.png",t:"GIS map & layers",n:"The reservoir, canals, gates and plots appear as live layers on a GIS map over satellite imagery. Plots are coloured by crop, so an operator sees the whole irrigation network geographically and can click straight to any plot."},
- {img:"slides/06-requests.png",t:"Water requests & planning",n:"When a water user needs water, they create a request. ISUI turns it into a plan — an invoice in 'plan' status with zero debt for now. Nothing is charged yet; the request simply enters the delivery schedule."},
- {img:"slides/07-hydromodule.png",t:"Irrigation plan & hydromodule norms",n:"The plan is built per plot: the district water norm for the crop multiplied by the plot's area, decade by decade through the season, using the norms of the plot's hydromodule zone. This is how ISUI turns crops and areas into a precise, fair watering schedule."},
+ {img:"slides/06-requests.png",t:"Water requests & planning",n:"When a water user needs water, they create a request. IMIS turns it into a plan — an invoice in 'plan' status with zero debt for now. Nothing is charged yet; the request simply enters the delivery schedule."},
+ {img:"slides/07-hydromodule.png",t:"Irrigation plan & hydromodule norms",n:"The plan is built per plot: the district water norm for the crop multiplied by the plot's area, decade by decade through the season, using the norms of the plot's hydromodule zone. This is how IMIS turns crops and areas into a precise, fair watering schedule."},
  {img:"slides/08-readings.png",t:"Meter readings & acceptance act",n:"When water is actually delivered, the volume is recorded by meter readings — entered manually or captured from sensors. These readings produce the water-acceptance act: the official record of how much water each user really received."},
  {img:"slides/09-dispatching.png",t:"Dispatching & water balance",n:"Dispatchers see the daily distribution of water per canal — planned versus actual — so any shortfall shows up immediately. Together with the water balance, this reveals where water is lost between the source and the field."},
  {img:"slides/10-billing.png",t:"Billing — charges & debt",n:"Debt is created only after the acceptance act, never from an estimate: the charge equals the actual metered volume multiplied by the tariff. You see total charged, paid and outstanding debt, and every bill posts to the water user's personal account."},
- {img:"slides/11-payments.png",t:"Payments, personal accounts & debt",n:"Water users pay through the bank using their personal account number. ISUI reconciles those payments automatically, tracks who still owes money, and keeps every personal account correct — including corrections and reversals when a reading is fixed."},
+ {img:"slides/11-payments.png",t:"Payments, personal accounts & debt",n:"Water users pay through the bank using their personal account number. IMIS reconciles those payments automatically, tracks who still owes money, and keeps every personal account correct — including corrections and reversals when a reading is fixed."},
  {img:"slides/12-reports.png",t:"Reports & analytics",n:"All of this becomes reports: plan versus fact, collection, losses and ten-day summaries, by organization and by water. They can be filtered and exported to Excel or PDF for the agency and its departments."},
- {img:"slides/13-audit.png",t:"Audit & security",n:"Every action in the system is recorded. ISUI keeps a full audit trail and supports recalculation and reversal, so balances always stay correct and every change can be traced — essential for public money and water."},
+ {img:"slides/13-audit.png",t:"Audit & security",n:"Every action in the system is recorded. IMIS keeps a full audit trail and supports recalculation and reversal, so balances always stay correct and every change can be traced — essential for public money and water."},
  {img:"slides/14-admin.png",t:"Administration",n:"Finally, administrators manage the whole system from one place: organizations, directories, tariffs, and the fine-grained permissions that decide exactly what each role can see and do."}
 ];
 const SAMPLES=["How is a farmer's debt calculated?","Net vs gross norm — what's the difference?","How does the per-plot plan work?","When is the membership fee charged?","Can a charge be reversed?"];
@@ -143,7 +143,7 @@ async function ask(){
   const ans=document.getElementById('ans'),txt=document.getElementById('anstxt'),meta=document.getElementById('ansmeta');
   ans.classList.add('show');txt.innerHTML='<span class="spin"></span> thinking…';meta.textContent='';
   try{const r=await fetch(BRAIN+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({q})});
-    const d=await r.json();txt.textContent=d.answer||"(no answer)";meta.textContent=d.relevant===false?"off-topic — steering back to ISUI":"";speakAns(d.answer||"");
+    const d=await r.json();txt.textContent=d.answer||"(no answer)";meta.textContent=d.relevant===false?"off-topic — steering back to IMIS":"";speakAns(d.answer||"");
   }catch(e){txt.textContent="The assistant is unreachable right now. Please try again in a moment.";}
 }
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});

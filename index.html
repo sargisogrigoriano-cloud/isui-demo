@@ -3,42 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ISUI — Live Irrigation Water-Management System</title>
+<title>ISUI — Electronic Management of Irrigation &amp; Melioration</title>
 <style>
-  :root{--bg:#0b1620;--card:#13283a;--line:#1e3d55;--ink:#eaf3fb;--mut:#9fb8cc;--accent:#39b7e6;--accent2:#2bd4a7}
+  :root{--bg:#0a141d;--card:#13283a;--line:#1e3d55;--ink:#eaf3fb;--mut:#9fb8cc;--accent:#39b7e6;--accent2:#2bd4a7}
   *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{background:linear-gradient(180deg,#0a141d,#0b1620 45%);color:var(--ink);
+  body{background:linear-gradient(180deg,#09121a,#0b1620 50%);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
   a{color:var(--accent)}
-  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
-  header.hero{padding:54px 0 20px;text-align:center;background:radial-gradient(1200px 420px at 50% -20%, #14354c66, transparent)}
-  .badge{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);
-    border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:16px}
-  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#2bd4a7;margin-right:6px;vertical-align:1px;box-shadow:0 0 0 0 #2bd4a7aa;animation:p 1.8s infinite}
-  @keyframes p{0%{box-shadow:0 0 0 0 #2bd4a780}70%{box-shadow:0 0 0 8px #2bd4a700}100%{box-shadow:0 0 0 0 #2bd4a700}}
-  h1{font-size:34px;line-height:1.12;margin:0 0 10px;font-weight:800}h1 span{color:var(--accent)}
-  .sub{color:var(--mut);font-size:17px;max-width:720px;margin:0 auto}
-  .launch{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 10px}
-  .btn{background:var(--accent);color:#04121c;border:none;border-radius:12px;padding:15px 26px;font-weight:800;font-size:17px;cursor:pointer;text-decoration:none;display:inline-block}
-  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600;font-size:15px;padding:15px 20px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+  header.top{padding:26px 0 8px;text-align:center}
+  .badge{display:inline-block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:12px}
+  h1{font-size:26px;line-height:1.15;margin:0;font-weight:800}h1 span{color:var(--accent)}
+  /* stage */
+  .stage{margin:18px 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px #0007;position:relative}
+  .slideimg{display:block;width:100%;height:auto;background:#06101a}
+  .cap{background:linear-gradient(180deg,#0e2132,#0c1c2b);border-top:1px solid var(--line);padding:16px 20px}
+  .cap .k{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cap .num{font-size:12px;color:var(--accent2);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+  .cap h2{margin:0;font-size:20px}
+  .cap p{margin:7px 0 0;color:var(--mut);font-size:15px;max-width:860px}
+  /* controls */
+  .ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 2px 0}
+  .btn{background:var(--accent);color:#04121c;border:none;border-radius:10px;padding:11px 16px;font-weight:700;font-size:15px;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600}
   .btn:hover{filter:brightness(1.08)}
-  .note{color:var(--mut);font-size:13px;text-align:center;margin:6px 0 34px}
-  .cols{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin:10px 0 40px}
-  @media(max-width:760px){.cols{grid-template-columns:1fr}}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
-  .panel h2{margin:0 0 12px;font-size:19px}
-  .feat{display:flex;gap:9px;align-items:flex-start;margin:8px 0;color:#d6e6f2;font-size:14px}
-  .feat::before{content:"▸";color:var(--accent2);margin-top:1px}
-  .cred{background:#0a1824;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--mut);margin-top:12px}
-  .cred b{color:var(--ink)}
+  .toggle{display:flex;align-items:center;gap:7px;color:var(--mut);font-size:13px;cursor:pointer;user-select:none;margin-left:auto}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;margin:14px 2px 34px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#1e3d55;cursor:pointer}
+  .dot.on{background:var(--accent)}
   /* Q&A */
-  .qa{background:linear-gradient(180deg,#102232,#0e1d2b);border:1px solid var(--line);border-radius:16px;padding:22px;margin:0 0 50px}
+  .qa{background:linear-gradient(180deg,#102232,#0e1d2b);border:1px solid var(--line);border-radius:16px;padding:22px;margin:0 0 48px}
   .qa h2{margin:0 0 4px;font-size:20px}.pill{display:inline-block;background:#12304380;border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--accent2);margin-left:8px}
   .qa .hint{color:var(--mut);font-size:14px;margin:0 0 14px}
   .qa .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .qa input[type=text]{flex:1;min-width:200px;background:#0a1824;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:12px 14px;font-size:15px;outline:none}
   .qa input[type=text]:focus{border-color:var(--accent)}
-  .toggle{display:flex;align-items:center;gap:7px;color:var(--mut);font-size:13px;cursor:pointer;user-select:none}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
   .chip{background:#0a1824;border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
   .chip:hover{border-color:var(--accent);color:var(--ink)}
@@ -46,87 +46,111 @@
   .ans.show{display:block}.ans .txt{font-size:16px}.ans .meta{margin-top:10px;font-size:13px;color:var(--mut)}
   .spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-3px}
   @keyframes s{to{transform:rotate(360deg)}}
-  footer{border-top:1px solid var(--line);padding:22px 0 50px;color:var(--mut);font-size:13px;text-align:center}
+  footer{border-top:1px solid var(--line);padding:20px 0 48px;color:var(--mut);font-size:13px;text-align:center}
 </style>
 </head>
 <body>
-<header class="hero"><div class="wrap">
-  <div class="badge"><span class="dot"></span>Live system — running now</div>
-  <h1><span>ISUI</span> — Irrigation Water-Management System</h1>
-  <p class="sub">This is the real, running ISUI — open it and work with live data: water users, plots,
-  requests, planning, hydromodule norms, metering acts, billing and reports.</p>
-  <div class="launch">
-    <a class="btn" id="openbtn" href="#" target="_blank" rel="noopener">▶ Open the live ISUI system</a>
-    <a class="btn ghost" href="#ask">💬 Ask the assistant</a>
-  </div>
-  <div class="note" id="statusline">checking system status…</div>
+<header class="top"><div class="wrap">
+  <div class="badge">Guided product tour</div>
+  <h1><span>ISUI</span> — Electronic Management of Irrigation &amp; Melioration</h1>
 </div></header>
 
 <main class="wrap">
-  <div class="cols">
-    <div class="panel">
-      <h2>What you can do in the live system</h2>
-      <div class="feat">Register water users with their plots, area and crop</div>
-      <div class="feat">Create a water request — it becomes a plan (invoice, zero debt)</div>
-      <div class="feat">Build the per-plot irrigation plan (q × area) by hydromodule zone</div>
-      <div class="feat">Sign a water-acceptance act → debt = actual volume × tariff</div>
-      <div class="feat">Track billing, personal accounts, payments and debt</div>
-      <div class="feat">See plan vs fact, water balance and losses across the org hierarchy</div>
-      <div class="feat">Explore the plots map, canals and layers; export reports</div>
-    </div>
-    <div class="panel">
-      <h2>Open the demo</h2>
-      <p style="color:var(--mut);font-size:14px;margin:0 0 6px">Click the button above to open ISUI in a new tab and sign in.</p>
-      <div class="cred" id="cred">Demo sign-in: <b>— ask the owner —</b></div>
-      <p style="color:var(--mut);font-size:12.5px;margin:12px 0 0">The system is hosted live; it opens in a separate tab so you can click through it freely.</p>
+  <div class="stage">
+    <img class="slideimg" id="img" alt="ISUI screen">
+    <div class="cap">
+      <div class="k"><span class="num" id="num">1 / 18</span><h2 id="title"></h2></div>
+      <p id="narr"></p>
     </div>
   </div>
+  <div class="ctrl">
+    <button class="btn ghost" onclick="go(-1)">← Prev</button>
+    <button class="btn" id="play" onclick="toggleTour()">▶ Play tour</button>
+    <button class="btn ghost" onclick="go(1)">Next →</button>
+    <label class="toggle"><input type="checkbox" id="voice" checked> 🔊 narrate aloud</label>
+  </div>
+  <div class="dots" id="dots"></div>
 
   <section class="qa" id="ask">
     <h2>Ask anything about ISUI <span class="pill">free · live</span></h2>
-    <p class="hint">A free assistant that explains any part of the system while you explore it.</p>
+    <p class="hint">A free assistant answers any question about the system.</p>
     <div class="row">
       <input type="text" id="q" placeholder="e.g. How is a farmer's debt calculated?" autocomplete="off">
-      <button class="btn" style="padding:12px 18px;font-size:15px" onclick="ask()">Ask</button>
-      <label class="toggle"><input type="checkbox" id="voice"> 🔊 read aloud</label>
+      <button class="btn" onclick="ask()">Ask</button>
+      <label class="toggle" style="margin-left:0"><input type="checkbox" id="qvoice" checked> 🔊 read aloud</label>
     </div>
     <div class="chips" id="chips"></div>
     <div class="ans" id="ans"><div class="txt" id="anstxt"></div><div class="meta" id="ansmeta"></div></div>
   </section>
 </main>
 
-<footer><div class="wrap">ISUI — live system demonstration · free assistant. <span id="brainstat"></span></div></footer>
+<footer><div class="wrap">ISUI — real system walkthrough · free assistant. <span id="brainstat"></span></div></footer>
 
 <script>
-// live ISUI endpoints
-const ISUI_PUBLIC = "https://vat-ice-update-idaho.trycloudflare.com";
-const ISUI_LOCAL  = "http://10.10.10.113:8081";
-const BRAIN = "https://flour-tackle-illustrated-adelaide.trycloudflare.com";
-document.getElementById('openbtn').href = ISUI_PUBLIC;
+const BRAIN="https://flour-tackle-illustrated-adelaide.trycloudflare.com";
+const SLIDES=[
+ {img:"slides/s00.jpg",t:"Electronic Management of Irrigation & Melioration",n:"A single national platform that manages the whole irrigation water cycle — users, plots, planning, delivery, metering, billing and reporting."},
+ {img:"slides/s01.jpg",t:"One platform, the whole water cycle",n:"From registering a farmer to collecting payment, every step lives in one connected system."},
+ {img:"slides/s02.jpg",t:"Registration",n:"Every water user and farm is registered with its plots and area — the foundation for planning and billing."},
+ {img:"slides/s03.jpg",t:"Registration — water-user card",n:"Each user has a full profile: plots, crops, personal account and history."},
+ {img:"slides/s04.jpg",t:"Role-based access for every level",n:"Access is granted by flexible per-window permissions — each role sees exactly the screens and actions it needs."},
+ {img:"slides/s05.jpg",t:"Organization hierarchy",n:"Water bodies form a hierarchy — associations under district authorities under the national agency; plan and fact roll up by level."},
+ {img:"slides/s06.jpg",t:"Water users & farms",n:"Every farm is listed with its plots, area and crops, managed by the association operator."},
+ {img:"slides/s07.jpg",t:"Plots, crops & irrigation norms",n:"For each plot we record the crop; the crop and its hydromodule zone set the water norm that drives the plan."},
+ {img:"slides/s08.jpg",t:"GIS map & layers",n:"The reservoir, canals and plots appear as live layers over the map; plots are coloured by crop."},
+ {img:"slides/s09.jpg",t:"Water-supply contracts & requests",n:"A water request becomes a plan — an invoice in plan status with zero debt, under the water-supply contract."},
+ {img:"slides/s10.jpg",t:"Water limits & allocation",n:"Each zone gets a seasonal water allocation, tracked against real demand and delivery."},
+ {img:"slides/s11.jpg",t:"Sensor & meter readings",n:"Delivered volumes are captured by readings — manual or from sensors — feeding the water-acceptance act."},
+ {img:"slides/s12.jpg",t:"Dispatching & water balance",n:"Operators see daily delivery per canal, plan versus actual, and the water balance with losses."},
+ {img:"slides/s13.jpg",t:"Billing",n:"Debt appears only after the acceptance act: actual metered volume × tariff — never estimated. Bills post to each personal account."},
+ {img:"slides/s14.jpg",t:"Payments & collection",n:"Users pay through the bank by personal account; ISUI reconciles payments and tracks debt and collection."},
+ {img:"slides/s15.jpg",t:"Reports & analytics",n:"Plan versus fact, collection, losses and ten-day summaries — filtered and exported to Excel or PDF."},
+ {img:"slides/s16.jpg",t:"Audit & security",n:"Every change is recorded; recalculation and reversal keep balances correct and fully auditable."},
+ {img:"slides/s17.jpg",t:"Administration",n:"Organizations, directories, tariffs and permissions are all managed from one administration area."}
+];
+const SAMPLES=["How is a farmer's debt calculated?","Net vs gross norm — what's the difference?","How does the per-plot plan work?","When is the membership fee charged?","Can a charge be reversed?"];
 
-const SAMPLES = ["How is a farmer's debt calculated?","Net vs gross norm — what's the difference?",
-  "How does the per-plot plan work?","When is the membership fee charged?","Can a charge be reversed?","How are water losses measured?"];
+let cur=0,timer=null;
+const img=document.getElementById('img'),numEl=document.getElementById('num'),titleEl=document.getElementById('title'),narrEl=document.getElementById('narr');
+const dotsEl=document.getElementById('dots');
+SLIDES.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>{stop();show(i)};dotsEl.appendChild(d)});
+function show(i){
+  cur=(i+SLIDES.length)%SLIDES.length;const s=SLIDES[cur];
+  img.src=s.img;titleEl.textContent=s.t;narrEl.textContent=s.n;numEl.textContent=(cur+1)+' / '+SLIDES.length;
+  [...dotsEl.children].forEach((d,j)=>d.classList.toggle('on',j===cur));
+  narrate(s.t+'. '+s.n);
+}
+function go(d){stop();show(cur+d)}
+function narrate(t){
+  if(!document.getElementById('voice').checked||!window.speechSynthesis)return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=1;
+  const vs=speechSynthesis.getVoices();const v=vs.find(x=>/en(-|_)US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+function toggleTour(){
+  const b=document.getElementById('play');
+  if(timer){stop();return;}
+  b.textContent='⏸ Pause';
+  // advance every ~6.5s, but wait while narration is still speaking
+  timer=setInterval(()=>{ if(window.speechSynthesis&&document.getElementById('voice').checked&&speechSynthesis.speaking) return; show((cur+1)%SLIDES.length); },6500);
+  show(cur);
+}
+function stop(){if(timer){clearInterval(timer);timer=null;document.getElementById('play').textContent='▶ Play tour';}if(window.speechSynthesis)speechSynthesis.cancel();}
+show(0);
+
 const chips=document.getElementById('chips');
 SAMPLES.forEach(s=>{const c=document.createElement('span');c.className='chip';c.textContent=s;c.onclick=()=>{document.getElementById('q').value=s;ask()};chips.appendChild(c)});
-
-function speak(t){if(!document.getElementById('voice').checked||!window.speechSynthesis)return;
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';
-  const vs=speechSynthesis.getVoices();const v=vs.find(x=>/en(-|_)US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u);}
+function speakAns(t){if(!document.getElementById('qvoice').checked||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';const vs=speechSynthesis.getVoices();const v=vs.find(x=>/en(-|_)US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u);}
 async function ask(){
-  const q=document.getElementById('q').value.trim(); if(!q)return;
+  const q=document.getElementById('q').value.trim();if(!q)return;stop();
   const ans=document.getElementById('ans'),txt=document.getElementById('anstxt'),meta=document.getElementById('ansmeta');
-  ans.classList.add('show'); txt.innerHTML='<span class="spin"></span> thinking…'; meta.textContent='';
+  ans.classList.add('show');txt.innerHTML='<span class="spin"></span> thinking…';meta.textContent='';
   try{const r=await fetch(BRAIN+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({q})});
-    const d=await r.json(); txt.textContent=d.answer||"(no answer)";
-    meta.textContent=d.relevant===false?"off-topic — steering back to ISUI":""; speak(d.answer||"");
-  }catch(e){ txt.textContent="The assistant is unreachable right now. Please try again in a moment."; }
+    const d=await r.json();txt.textContent=d.answer||"(no answer)";meta.textContent=d.relevant===false?"off-topic — steering back to ISUI":"";speakAns(d.answer||"");
+  }catch(e){txt.textContent="The assistant is unreachable right now. Please try again in a moment.";}
 }
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
-
-// status: is the live ISUI reachable?
-const sl=document.getElementById('statusline');
-fetch(ISUI_PUBLIC,{mode:'no-cors'}).then(()=>{sl.innerHTML='🟢 Live system is online — click “Open the live ISUI system”.';})
-  .catch(()=>{sl.innerHTML='🟡 If the button does not open, the live server may be briefly offline.';});
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
 fetch(BRAIN+"/health").then(r=>r.json()).then(d=>{document.getElementById('brainstat').textContent=d&&d.ok?'· assistant online':'';}).catch(()=>{});
 </script>
 </body>

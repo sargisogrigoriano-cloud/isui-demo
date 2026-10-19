@@ -1,154 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IMIS — Irrigation Management Information System</title>
+<title>IMIS — Guided Tour</title>
+<meta name="description" content="IMIS — Irrigation Management Information System of the Agency of Melioration and Irrigation of Tajikistan: guided tour of the real system with a presenter and a live assistant.">
 <style>
-  :root{--bg:#0a141d;--card:#13283a;--line:#1e3d55;--ink:#eaf3fb;--mut:#9fb8cc;--accent:#39b7e6;--accent2:#2bd4a7}
-  *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{background:linear-gradient(180deg,#09121a,#0b1620 50%);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
-  a{color:var(--accent)}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
-  header.top{padding:26px 0 8px;text-align:center}
-  .badge{display:inline-block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);
-    border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:12px}
-  h1{font-size:26px;line-height:1.15;margin:0;font-weight:800}h1 span{color:var(--accent)}
-  /* stage */
-  .stage{margin:18px 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 60px #0007;position:relative}
-  .slideimg{display:block;width:100%;height:auto;background:#06101a}
-  .cap{background:linear-gradient(180deg,#0e2132,#0c1c2b);border-top:1px solid var(--line);padding:16px 20px}
-  .cap .k{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .cap .num{font-size:12px;color:var(--accent2);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
-  .cap h2{margin:0;font-size:20px}
-  .cap p{margin:7px 0 0;color:var(--mut);font-size:15px;max-width:860px}
-  /* controls */
-  .ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 2px 0}
-  .btn{background:var(--accent);color:#04121c;border:none;border-radius:10px;padding:11px 16px;font-weight:700;font-size:15px;cursor:pointer}
-  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:600}
-  .btn:hover{filter:brightness(1.08)}
-  .toggle{display:flex;align-items:center;gap:7px;color:var(--mut);font-size:13px;cursor:pointer;user-select:none;margin-left:auto}
-  .dots{display:flex;gap:6px;flex-wrap:wrap;margin:14px 2px 34px}
-  .dot{width:9px;height:9px;border-radius:50%;background:#1e3d55;cursor:pointer}
-  .dot.on{background:var(--accent)}
-  /* Q&A */
-  .qa{background:linear-gradient(180deg,#102232,#0e1d2b);border:1px solid var(--line);border-radius:16px;padding:22px;margin:0 0 48px}
-  .qa h2{margin:0 0 4px;font-size:20px}.pill{display:inline-block;background:#12304380;border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--accent2);margin-left:8px}
-  .qa .hint{color:var(--mut);font-size:14px;margin:0 0 14px}
-  .qa .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .qa input[type=text]{flex:1;min-width:200px;background:#0a1824;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:12px 14px;font-size:15px;outline:none}
-  .qa input[type=text]:focus{border-color:var(--accent)}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .chip{background:#0a1824;border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
-  .chip:hover{border-color:var(--accent);color:var(--ink)}
-  .ans{margin-top:16px;background:#0a1824;border:1px solid var(--line);border-radius:12px;padding:16px;display:none}
-  .ans.show{display:block}.ans .txt{font-size:16px}.ans .meta{margin-top:10px;font-size:13px;color:var(--mut)}
-  .spin{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-3px}
-  @keyframes s{to{transform:rotate(360deg)}}
-  footer{border-top:1px solid var(--line);padding:20px 0 48px;color:var(--mut);font-size:13px;text-align:center}
+:root{--bg:#f4f8fb;--card:#fff;--ink:#14263a;--ink2:#4a5d70;--line:#d8e3ec;--blue:#1b9bd1;--blue2:#0f6fa0;--soft:#e8f4fa;--ok:#2e9e44}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line)}
+.logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1b9bd1,#0f6fa0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;letter-spacing:.5px}
+header h1{margin:0;font-size:18px}
+header p{margin:0;color:var(--ink2);font-size:13px}
+.start{margin-left:auto;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer}
+.start:hover{background:var(--blue2)}
+main{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(300px,1fr);gap:18px;padding:18px 22px;max-width:1500px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.screen{position:relative;aspect-ratio:16/9;background:#eef3f7}
+.screen video{width:100%;height:100%;object-fit:contain;display:block;background:#eef3f7}
+.badge{position:absolute;left:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600}
+.chapters{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--ink2)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.side{display:flex;flex-direction:column;gap:14px}
+.presenter{position:relative;aspect-ratio:16/9;background:#dfe9f1}
+.presenter video{width:100%;height:100%;object-fit:cover;display:block}
+.who{position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600}
+.state{position:absolute;right:10px;top:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--ink2)}
+.cap{padding:12px 14px;min-height:96px;font-size:14px;color:var(--ink)}
+.ctrl{display:flex;gap:8px;padding:0 14px 14px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--ink)}
+.btn.p{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+.num{margin-left:auto;color:var(--ink2);font-size:13px}
+.ask h2{margin:0;padding:12px 14px 0;font-size:15px}
+.ask p.hint{margin:4px 14px 8px;color:var(--ink2);font-size:12.5px}
+.row{display:flex;gap:8px;padding:0 14px}
+.row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:14px}
+.samples{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px}
+.sample{border:1px dashed var(--line);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--blue2);background:var(--soft)}
+.ans{margin:0 14px 14px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:14px;display:none}
+.ans.show{display:block}
+.ans ol{margin:6px 0 0 18px;padding:0}
+.mic.on{background:#ffe9e9;border-color:#e57373}
+footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
+@media (max-width:900px){main{grid-template-columns:1fr;padding:12px}header{flex-wrap:wrap;padding:12px 16px}.start{margin-left:0;width:100%}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap">
-  <div class="badge">Guided product tour</div>
-  <h1><span>IMIS</span> — Irrigation Management Information System</h1>
-</div></header>
-
-<main class="wrap">
-  <div class="stage">
-    <img class="slideimg" id="img" alt="IMIS screen">
-    <div class="cap">
-      <div class="k"><span class="num" id="num">1 / 18</span><h2 id="title"></h2></div>
-      <p id="narr"></p>
+<header>
+  <div class="logo">IMIS</div>
+  <div><h1>IMIS — Irrigation Management Information System</h1><p>Agency of Melioration and Irrigation · Republic of Tajikistan · guided tour of the real system</p></div>
+  <button class="start" id="start">▶ Start the guided tour</button>
+</header>
+<main>
+  <section>
+    <div class="card">
+      <div class="screen"><video id="scr" muted playsinline preload="auto" poster="ekrany/intro.jpg"></video><div class="badge" id="badge">IMIS</div></div>
+      <div class="chapters" id="chapters"></div>
     </div>
-  </div>
-  <div class="ctrl">
-    <button class="btn ghost" onclick="go(-1)">← Prev</button>
-    <button class="btn" id="play" onclick="toggleTour()">▶ Play tour</button>
-    <button class="btn ghost" onclick="go(1)">Next →</button>
-    <label class="toggle"><input type="checkbox" id="voice" checked> 🔊 narrate aloud</label>
-  </div>
-  <div class="dots" id="dots"></div>
-
-  <section class="qa" id="ask">
-    <h2>Ask anything about IMIS <span class="pill">free · live</span></h2>
-    <p class="hint">A free assistant answers any question about the system.</p>
-    <div class="row">
-      <input type="text" id="q" placeholder="e.g. How is a farmer's debt calculated?" autocomplete="off">
-      <button class="btn" onclick="ask()">Ask</button>
-      <label class="toggle" style="margin-left:0"><input type="checkbox" id="qvoice" checked> 🔊 read aloud</label>
-    </div>
-    <div class="chips" id="chips"></div>
-    <div class="ans" id="ans"><div class="txt" id="anstxt"></div><div class="meta" id="ansmeta"></div></div>
   </section>
+  <aside class="side">
+    <div class="card">
+      <div class="presenter"><video id="av" playsinline preload="auto" poster="presenter/poster.jpg"></video><div class="who">Sargis Grigorian · IMIS</div><div class="state" id="state">Ready</div></div>
+      <div class="cap" id="cap">Press “Start the guided tour”. I will walk you through every part of IMIS on the real system. You can stop me at any time and ask a question.</div>
+      <div class="ctrl"><button class="btn" id="prev">◀</button><button class="btn p" id="play">▶ Play</button><button class="btn" id="next">▶▶</button><button class="btn" id="snd" title="Sound">🔊</button><span class="num" id="num">0 / 18</span></div>
+    </div>
+    <div class="card ask">
+      <h2>Ask anything about IMIS</h2>
+      <p class="hint">Type or speak your question. The assistant answers by voice and shows the matching part of the system.</p>
+      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
+      <div class="samples" id="samples"></div>
+      <div class="ans" id="ans"></div>
+    </div>
+  </aside>
 </main>
-
-<footer><div class="wrap">IMIS — real system walkthrough · free assistant. <span id="brainstat"></span></div></footer>
-
+<footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
+<audio id="aud" playsinline preload="auto"></audio>
 <script>
-const BRAIN="https://flour-tackle-illustrated-adelaide.trycloudflare.com";
-const SLIDES=[
- {img:"slides/00-login.png",t:"What is IMIS, and why it matters",n:"This is IMIS — the Irrigation Management Information System of the Agency of Melioration and Irrigation of Tajikistan. It replaces paper and spreadsheets with one transparent platform that runs the entire irrigation water cycle: who receives water, how much, when, and how it is metered, billed and collected. Everyone — from a single farmer to the national agency — signs in by their own role and sees exactly what they are allowed to."},
- {img:"slides/01-dashboard.png",t:"Dashboard — the whole picture",n:"After signing in, each organization gets its own dashboard: registered accounts, water planned and delivered, the collection rate, outstanding debt and losses, plus the health of every service. It is the single place to understand, at a glance, how the whole system is performing today."},
- {img:"slides/02-structure.png",t:"Organization structure & hierarchy",n:"Water management is organized as a hierarchy — water-user associations under district authorities, under basin authorities and the national agency. IMIS holds this full structure of 164 organizations, so plans and actual figures roll up automatically from a single plot all the way to the national level."},
- {img:"slides/03-users.png",t:"Water users & associations",n:"Every farm and water user is registered here with its plots, area and crops, managed by its association. This registry is the foundation of everything — planning, delivery and billing all start from who the water users are and what they farm."},
- {img:"slides/04-plots.png",t:"Plots, crops & areas",n:"For each plot IMIS records the crop and the exact area. The crop, together with the plot's hydromodule zone, sets the water norm — how much water that land needs — which is what drives the irrigation plan."},
- {img:"slides/05-map.png",t:"GIS map & layers",n:"The reservoir, canals, gates and plots appear as live layers on a GIS map over satellite imagery. Plots are coloured by crop, so an operator sees the whole irrigation network geographically and can click straight to any plot."},
- {img:"slides/06-requests.png",t:"Water requests & planning",n:"When a water user needs water, they create a request. IMIS turns it into a plan — an invoice in 'plan' status with zero debt for now. Nothing is charged yet; the request simply enters the delivery schedule."},
- {img:"slides/07-hydromodule.png",t:"Irrigation plan & hydromodule norms",n:"The plan is built per plot: the district water norm for the crop multiplied by the plot's area, decade by decade through the season, using the norms of the plot's hydromodule zone. This is how IMIS turns crops and areas into a precise, fair watering schedule."},
- {img:"slides/08-readings.png",t:"Meter readings & acceptance act",n:"When water is actually delivered, the volume is recorded by meter readings — entered manually or captured from sensors. These readings produce the water-acceptance act: the official record of how much water each user really received."},
- {img:"slides/09-dispatching.png",t:"Dispatching & water balance",n:"Dispatchers see the daily distribution of water per canal — planned versus actual — so any shortfall shows up immediately. Together with the water balance, this reveals where water is lost between the source and the field."},
- {img:"slides/10-billing.png",t:"Billing — charges & debt",n:"Debt is created only after the acceptance act, never from an estimate: the charge equals the actual metered volume multiplied by the tariff. You see total charged, paid and outstanding debt, and every bill posts to the water user's personal account."},
- {img:"slides/11-payments.png",t:"Payments, personal accounts & debt",n:"Water users pay through the bank using their personal account number. IMIS reconciles those payments automatically, tracks who still owes money, and keeps every personal account correct — including corrections and reversals when a reading is fixed."},
- {img:"slides/12-reports.png",t:"Reports & analytics",n:"All of this becomes reports: plan versus fact, collection, losses and ten-day summaries, by organization and by water. They can be filtered and exported to Excel or PDF for the agency and its departments."},
- {img:"slides/13-audit.png",t:"Audit & security",n:"Every action in the system is recorded. IMIS keeps a full audit trail and supports recalculation and reversal, so balances always stay correct and every change can be traced — essential for public money and water."},
- {img:"slides/14-admin.png",t:"Administration",n:"Finally, administrators manage the whole system from one place: organizations, directories, tariffs, and the fine-grained permissions that decide exactly what each role can see and do."}
-];
-const SAMPLES=["How is a farmer's debt calculated?","Net vs gross norm — what's the difference?","How does the per-plot plan work?","When is the membership fee charged?","Can a charge be reversed?"];
+const BRAIN = "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/";
+const HDR = { "ngrok-skip-browser-warning": "1" };
+const KEYS = ["intro","dashboard","orgs","links","users","contracts","norms","readings","dispatch","balance","map","satellite","complaints","billing","assets","reports","admin","intro"];
+const TITLES = ["What is IMIS","Dashboard & KPI","Organizations & staff","Water objects & link scheme","Water users & plots","Contracts & requests","Norms, plan & crop rotation","Gauging stations & readings","Dispatching & ten-day summaries","Limits, water balance & losses","Map & GIS layers","Sentinel-2 & violations","Complaints & assignments","Charges & payments","Assets & directories","Reports & audit log","Permissions & mobile app","Thank you"];
+const SCREEN_TITLE = {intro:"What is IMIS",dashboard:"Dashboard & KPI",orgs:"Organizations & staff",links:"Water objects & link scheme",users:"Water users & plots",contracts:"Contracts & requests",norms:"Norms, plan & crop rotation",readings:"Gauging stations & readings",dispatch:"Dispatching & ten-day summaries",balance:"Limits, water balance & losses",map:"Map & GIS layers",satellite:"Sentinel-2 & violations",complaints:"Complaints & assignments",billing:"Charges & payments",assets:"Assets & directories",reports:"Reports & audit log",admin:"Permissions & mobile app"};
+const TEXTS = ["Hello, and welcome. This is IMIS — the Irrigation Management Information System of the Agency of Melioration and Irrigation of Tajikistan. It replaces paper and spreadsheets with one platform for the whole irrigation water cycle: who receives water, how much, when, how it is measured, billed and paid. Everyone signs in with their own role and sees their own organization and everything below it — a farmer sees only his own plots and bills. IMIS works in Tajik, Russian and English. Everything you will see is the real working system.", "Each role starts on its own dashboard: water planned and delivered, charges, payments, debt and collection rate, requests waiting for a decision, and alerts that need attention. The KPI page shows the same indicators over time, so management sees trends, not just today's numbers.", "Water management is a hierarchy: the national agency, basin and state departments, hydrographic sections and water user associations. What matters is who reports to whom — and each organization in IMIS knows exactly that: who it reports to. So the administrator can move a whole branch without rebuilding anything, and every figure rolls up automatically from a single plot to the national level. The Staff tab shows each person's position and role; one person has one card, and a substitution is recorded with its dates.", "Next to the organizations, IMIS keeps the water objects — basins, irrigation systems, subsystems and canals. An organization manages; a canal carries the water. The link scheme shows it all as one living tree: organizations linked to the water objects they serve, the tree of organizations from the agency to every association, the tree of water objects from the basin to every canal, and the IMIS model that puts everything together — down to the water users. Choose a canal, and you see who manages it, which associations it feeds and which farmers depend on it.", "A farmer brings his passport, tax number and land certificate to the water user association, which registers him in IMIS. He gets a unique number and one personal account for payments. Every plot is recorded with its cadastral number, area, the canal that feeds it and its hydromodule district, and its outline is drawn on the map from a GPS survey. If a farmer's land lies in two associations, he is a member of both, and each sees only its own part.", "Water is supplied only under a contract between the water user, the association and the department above it. The system assigns the number; the farmer signs, and the higher department confirms. Before the term ends, both are reminded and the contract is extended without losing its history. Every ten days the farmer requests water for a plot in his contract — from the mobile app or the website. Without a phone, the association submits for him, and IMIS records who did it. The area is checked against the contract, and an approved request enters the schedule. Nothing is charged yet.", "How much water does a crop need? It depends on the land. Hydromodule districts group land by groundwater depth and soil: where groundwater is close, roots get moisture from below and need less water. For every crop in every district, IMIS keeps the net and gross norm for each ten-day period, by the FAO methodology. Before the season, associations enter their crop rotation, and from crops, areas and norms IMIS builds the water use plan — plot by plot, across all thirty-six ten-day periods — adding up to the national need.", "A plan is only an intention; a reading is the fact. Water is measured at gauging stations on the canals. Many stations measure the level, so each has a rating curve that turns level into flow. An inspector enters the reading in the mobile app with a photo of the gauge, the GPS location and the time. Even without a signal, it is saved on the phone and sent as soon as the connection returns. The volume is the difference from the previous reading. IMIS is also ready to receive data straight from level sensors and flow meters.", "Dispatchers follow the distribution of water across the canals, ten-day period by ten-day period, planned against actual — so a shortfall shows up immediately, not at the end of the season. Every ten days, each organization submits a summary to the one above — delivery, charges, payments and debt — and the higher organization accepts it.", "A limit is the volume the state allows to be taken from a river, by basin and quarter. IMIS compares actual intake with the limit and warns when it is exceeded — without ever cutting water to the fields. The water balance shows how much was taken from the source, how much entered the network and how much reached the farmers. Canal efficiency — delivered divided by supplied — shows exactly which canal loses the most water, and where repair money will save the most.", "The map is a working tool. Base layers come from the GIS server: rivers, reservoirs, drainage, districts and settlements. On top, IMIS draws its own layers: plots, canals, gauging stations, pump stations, association territories and sensors — each can be switched on or off. Plots are coloured by crop, and any plot opens straight from the map with its contract, crops and debt.", "The declared crop decides the water norm, and therefore the bill. No one can visit every field, so IMIS checks plots with Sentinel-2 satellite images: the vegetation index is compared with what the declared crop should show in that ten-day period. A mismatch is not a penalty — it sends an inspector to check. Violations, such as unauthorised intake, a different crop or damage to a canal, are recorded by the inspector with a photo, location and time. The association is notified, the higher department reviews the act, and a closed act is final.", "A farmer can complain from his phone — no water, water late, too little, poor quality or damaged infrastructure — with a photo and the request concerned. The complaint goes to the organization above the association; if it is not handled in time, it rises to the next level, keeping its original date, and the farmer sees the answer in the app. Field work runs through assignments — inspections, readings, repairs — each with an inspector, object, priority and deadline, reported back with a photo.", "The most important rule: a charge is never an estimate. After delivery, the act records the volume actually received, and only then does IMIS charge it — actual volume times the approved tariff, today five dirams per cubic metre, by order number forty-eight. Each bill keeps its tariff, so a later change never rewrites old bills. To pay, the bank sends the personal account number, sees the open bills and pays the one chosen — never more than is owed. A repeated message is never booked twice, and a mistake is reversed, never deleted. The association fee, recalculations and the export to the 1C accounting system follow the same rule.", "IMIS keeps a register of irrigation assets — pump stations, hydraulic structures, canal sections and drainage — with capacity, value, wear, condition, inspection dates and every repair. Everything the calculations rely on lives in directories: crops and norms, tariffs, hydromodule districts, asset types and conditions, complaint types. A tariff is stored with its start date and old values are kept, so each calculation uses the value valid on its own date. A record in use is never deleted, only marked inactive.", "Every section becomes a report — for a ten-day period, a month, a quarter or a year — exported to Excel or PDF, and always matching its section, because both use the same rules. Every action is written to the audit log: who, what, the old and new value, when and from where — including bank requests. The log can only be added to: no one can change or delete an entry, not even the administrator.", "The administrator manages organizations, water objects and users from one place. Rights are flexible: every menu item and every action is a checkbox; a position gives a standard set, and a person can be given more, for example while replacing a colleague. In the field, IMIS works through the mobile app: farmers request water, confirm delivery, see their bills and file complaints; inspectors take readings, record violations and complete assignments — with photos and GPS, even offline.", "That is IMIS: one system, from the farmer's plot to the national agency — measured, transparent and fair. Thank you. If you have a question, just ask — I am here to help."];
+const SAMPLES = ["How is a farmer's debt calculated?","How are water readings taken?","What does the Sentinel-2 check do?","How do complaints move up?","What does the link scheme show?","How is the water use plan built?"];
+const $ = (id) => document.getElementById(id);
+const scr = $("scr"), av = $("av"), aud = $("aud");
+let idx = -1, touring = false, gen = 0, sound = true;
 
-let cur=0,timer=null;
-const img=document.getElementById('img'),numEl=document.getElementById('num'),titleEl=document.getElementById('title'),narrEl=document.getElementById('narr');
-const dotsEl=document.getElementById('dots');
-SLIDES.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>{stop();show(i)};dotsEl.appendChild(d)});
-function show(i){
-  cur=(i+SLIDES.length)%SLIDES.length;const s=SLIDES[cur];
-  img.src=s.img;titleEl.textContent=s.t;narrEl.textContent=s.n;numEl.textContent=(cur+1)+' / '+SLIDES.length;
-  [...dotsEl.children].forEach((d,j)=>d.classList.toggle('on',j===cur));
-  narrate(s.t+'. '+s.n);
-}
-function go(d){stop();show(cur+d)}
-function narrate(t){
-  if(!document.getElementById('voice').checked||!window.speechSynthesis)return;
-  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=1;
-  const vs=speechSynthesis.getVoices();const v=vs.find(x=>/en(-|_)US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;
-  speechSynthesis.speak(u);
-}
-function toggleTour(){
-  const b=document.getElementById('play');
-  if(timer){stop();return;}
-  b.textContent='⏸ Pause';
-  // advance every ~6.5s, but wait while narration is still speaking
-  timer=setInterval(()=>{ if(window.speechSynthesis&&document.getElementById('voice').checked&&speechSynthesis.speaking) return; show((cur+1)%SLIDES.length); },6500);
-  show(cur);
-}
-function stop(){if(timer){clearInterval(timer);timer=null;document.getElementById('play').textContent='▶ Play tour';}if(window.speechSynthesis)speechSynthesis.cancel();}
-show(0);
+// главы
+TITLES.forEach((t, i) => { const c = document.createElement("span"); c.className = "chip"; c.textContent = (i + 1) + ". " + t; c.onclick = () => { unlock(); touring = false; play(i); }; $("chapters").appendChild(c); });
+SAMPLES.forEach((s) => { const c = document.createElement("span"); c.className = "sample"; c.textContent = s; c.onclick = () => { $("q").value = s; ask(); }; $("samples").appendChild(c); });
 
-const chips=document.getElementById('chips');
-SAMPLES.forEach(s=>{const c=document.createElement('span');c.className='chip';c.textContent=s;c.onclick=()=>{document.getElementById('q').value=s;ask()};chips.appendChild(c)});
-function speakAns(t){if(!document.getElementById('qvoice').checked||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';const vs=speechSynthesis.getVoices();const v=vs.find(x=>/en(-|_)US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u);}
-async function ask(){
-  const q=document.getElementById('q').value.trim();if(!q)return;stop();
-  const ans=document.getElementById('ans'),txt=document.getElementById('anstxt'),meta=document.getElementById('ansmeta');
-  ans.classList.add('show');txt.innerHTML='<span class="spin"></span> thinking…';meta.textContent='';
-  try{const r=await fetch(BRAIN+"/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({q})});
-    const d=await r.json();txt.textContent=d.answer||"(no answer)";meta.textContent=d.relevant===false?"off-topic — steering back to IMIS":"";speakAns(d.answer||"");
-  }catch(e){txt.textContent="The assistant is unreachable right now. Please try again in a moment.";}
+function setState(t) { $("state").textContent = t; }
+function showScreen(key) {
+  key = SCREEN_TITLE[key] ? key : "intro";
+  $("badge").textContent = SCREEN_TITLE[key];
+  if (scr.dataset.k !== key) { scr.dataset.k = key; scr.src = "ekrany/" + key + ".mp4"; scr.poster = "ekrany/" + key + ".jpg"; }
+  try { scr.currentTime = 0; } catch (e) {}
+  scr.play().catch(() => {});
 }
-document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')ask()});
-if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>{};
-fetch(BRAIN+"/health").then(r=>r.json()).then(d=>{document.getElementById('brainstat').textContent=d&&d.ok?'· assistant online':'';}).catch(()=>{});
+function markChip(i) { [...$("chapters").children].forEach((c, j) => c.classList.toggle("on", j === i)); $("num").textContent = (i + 1) + " / " + TITLES.length; }
+function stopAll() { gen++; try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
+
+// разблокировать звук на телефонах (первое нажатие)
+let unlocked = false;
+function unlock() { if (unlocked) return; unlocked = true; try { aud.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="; aud.play().catch(() => {}); } catch (e) {} }
+
+function clip(src, { loop = false } = {}) {
+  return new Promise((res) => {
+    av.loop = loop; av.muted = !sound; av.src = src;
+    av.onended = () => res(); av.onerror = () => res();
+    const p = av.play(); if (p && p.catch) p.catch(() => res());
+    if (loop) res();
+  });
+}
+async function play(i) {
+  stopAll(); const g = gen; idx = i;
+  markChip(i); showScreen(KEYS[i]); $("cap").textContent = TEXTS[i]; setState("Presenting");
+  $("play").textContent = "⏸ Pause";
+  await clip("presenter/" + (i + 1) + ".mp4");
+  if (g !== gen) return;
+  setState("Ready"); $("play").textContent = "▶ Play";
+  if (touring && i + 1 < TITLES.length) setTimeout(() => { if (g === gen) play(i + 1); }, 700);
+  else touring = false;
+}
+$("start").onclick = () => { unlock(); touring = true; play(0); };
+$("play").onclick = () => { unlock(); if (!av.paused && !av.loop) { stopAll(); touring = false; setState("Paused"); $("play").textContent = "▶ Play"; return; } touring = true; play(Math.max(idx, 0)); };
+$("next").onclick = () => { unlock(); touring = false; play(Math.min(idx + 1, TITLES.length - 1)); };
+$("prev").onclick = () => { unlock(); touring = false; play(Math.max(idx - 1, 0)); };
+$("snd").onclick = () => { sound = !sound; av.muted = !sound; aud.muted = !sound; $("snd").textContent = sound ? "🔊" : "🔇"; };
+
+// голос ассистентки: звук Gemini с сервера; запасной — женский голос браузера
+const audioCache = {};
+function fetchVoice(text) {
+  if (audioCache[text]) return audioCache[text];
+  audioCache[text] = fetch(BRAIN + "tts", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ text }) })
+    .then((r) => r.ok ? r.json() : Promise.reject())
+    .then((d) => fetch(BRAIN + d.url, { headers: HDR })).then((r) => r.ok ? r.blob() : Promise.reject())
+    .then((b) => URL.createObjectURL(b)).catch(() => null);
+  return audioCache[text];
+}
+function femaleVoice() {
+  const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+  const en = vs.filter((v) => /^en/i.test(v.lang));
+  return en.find((v) => /female|samantha|zira|susan|karen|victoria|serena|moira|tessa|fiona|allison|ava|aria|jenny|google us english/i.test(v.name)) || en[0] || null;
+}
+function speakBrowser(text, g) {
+  return new Promise((res) => {
+    if (!sound || !window.speechSynthesis) return res();
+    const u = new SpeechSynthesisUtterance(text); const v = femaleVoice(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = "en-US";
+    u.pitch = 1.1; u.onend = res; u.onerror = res; speechSynthesis.speak(u);
+    const t = setInterval(() => { if (g !== gen) { speechSynthesis.cancel(); clearInterval(t); res(); } }, 300);
+  });
+}
+async function say(text, g) {
+  const url = await fetchVoice(text);
+  if (g !== gen) return;
+  if (!url) return speakBrowser(text, g);
+  await new Promise((res) => { aud.muted = !sound; aud.src = url; aud.onended = res; aud.onerror = res; const p = aud.play(); if (p && p.catch) p.catch(() => res()); });
+}
+
+// вопрос: «One moment…» → ответ сервера → «My assistant will now answer…» → голос ассистентки с экранами
+async function ask() {
+  const q = $("q").value.trim(); if (!q) return;
+  unlock(); stopAll(); touring = false; const g = gen;
+  const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
+  $("cap").textContent = "“" + q + "”";
+  const waitFiller = clip("presenter/filler_" + (Math.random() < 0.5 ? 0 : 1) + ".mp4");
+  let d;
+  try { d = await (await fetch(BRAIN + "ask", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
+  catch (e) { d = { answer: "The assistant is unreachable right now. Please try again in a moment.", screen: "intro", steps: [] }; }
+  if (g !== gen) return;
+  const steps = (d.steps && d.steps.length) ? d.steps : [{ screen: d.screen || "intro", text: d.answer || "" }];
+  steps.forEach((s) => fetchVoice(s.text));          // озвучка готовится, пока аватар говорит
+  if (d.steps && d.steps.length) fetchVoice(d.answer);
+  box.innerHTML = ""; const p = document.createElement("div"); p.textContent = d.answer || ""; box.appendChild(p);
+  if (d.steps && d.steps.length) { const ol = document.createElement("ol"); d.steps.forEach((s) => { const li = document.createElement("li"); li.textContent = s.text; ol.appendChild(li); }); box.appendChild(ol); }
+  await waitFiller; if (g !== gen) return;
+  setState("Assistant"); await clip("presenter/handoff.mp4"); if (g !== gen) return;
+  av.pause();
+  if (d.steps && d.steps.length) { $("cap").textContent = d.answer; await say(d.answer, g); }
+  for (const s of steps) { if (g !== gen) return; showScreen(s.screen); $("cap").textContent = s.text; await say(s.text, g); }
+  if (g === gen) setState("Ready");
+}
+$("ask").onclick = ask;
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+
+// голосовой ввод (где браузер умеет)
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SR) $("mic").style.display = "none";
+else $("mic").onclick = () => {
+  unlock(); const r = new SR(); r.lang = "en-US"; r.interimResults = false; $("mic").classList.add("on"); setState("Listening");
+  r.onresult = (e) => { $("q").value = e.results[0][0].transcript; ask(); };
+  r.onend = () => $("mic").classList.remove("on"); r.onerror = () => { $("mic").classList.remove("on"); setState("Ready"); };
+  r.start();
+};
+if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+showScreen("intro"); scr.pause();
 </script>
 </body>
 </html>

@@ -89,24 +89,20 @@
 <script>
 const BRAIN="https://flour-tackle-illustrated-adelaide.trycloudflare.com";
 const SLIDES=[
- {img:"slides/s00.jpg",t:"Electronic Management of Irrigation & Melioration",n:"A single national platform that manages the whole irrigation water cycle — users, plots, planning, delivery, metering, billing and reporting."},
- {img:"slides/s01.jpg",t:"One platform, the whole water cycle",n:"From registering a farmer to collecting payment, every step lives in one connected system."},
- {img:"slides/s02.jpg",t:"Registration",n:"Every water user and farm is registered with its plots and area — the foundation for planning and billing."},
- {img:"slides/s03.jpg",t:"Registration — water-user card",n:"Each user has a full profile: plots, crops, personal account and history."},
- {img:"slides/s04.jpg",t:"Role-based access for every level",n:"Access is granted by flexible per-window permissions — each role sees exactly the screens and actions it needs."},
- {img:"slides/s05.jpg",t:"Organization hierarchy",n:"Water bodies form a hierarchy — associations under district authorities under the national agency; plan and fact roll up by level."},
- {img:"slides/s06.jpg",t:"Water users & farms",n:"Every farm is listed with its plots, area and crops, managed by the association operator."},
- {img:"slides/s07.jpg",t:"Plots, crops & irrigation norms",n:"For each plot we record the crop; the crop and its hydromodule zone set the water norm that drives the plan."},
- {img:"slides/s08.jpg",t:"GIS map & layers",n:"The reservoir, canals and plots appear as live layers over the map; plots are coloured by crop."},
- {img:"slides/s09.jpg",t:"Water-supply contracts & requests",n:"A water request becomes a plan — an invoice in plan status with zero debt, under the water-supply contract."},
- {img:"slides/s10.jpg",t:"Water limits & allocation",n:"Each zone gets a seasonal water allocation, tracked against real demand and delivery."},
- {img:"slides/s11.jpg",t:"Sensor & meter readings",n:"Delivered volumes are captured by readings — manual or from sensors — feeding the water-acceptance act."},
- {img:"slides/s12.jpg",t:"Dispatching & water balance",n:"Operators see daily delivery per canal, plan versus actual, and the water balance with losses."},
- {img:"slides/s13.jpg",t:"Billing",n:"Debt appears only after the acceptance act: actual metered volume × tariff — never estimated. Bills post to each personal account."},
- {img:"slides/s14.jpg",t:"Payments & collection",n:"Users pay through the bank by personal account; ISUI reconciles payments and tracks debt and collection."},
- {img:"slides/s15.jpg",t:"Reports & analytics",n:"Plan versus fact, collection, losses and ten-day summaries — filtered and exported to Excel or PDF."},
- {img:"slides/s16.jpg",t:"Audit & security",n:"Every change is recorded; recalculation and reversal keep balances correct and fully auditable."},
- {img:"slides/s17.jpg",t:"Administration",n:"Organizations, directories, tariffs and permissions are all managed from one administration area."}
+ {img:"slides/01-dashboard.png",t:"Dashboard — the whole picture",n:"A live overview per association and district: accounts, water delivered, collection and losses, with services status."},
+ {img:"slides/02-structure.png",t:"Organization structure & hierarchy",n:"Water bodies form a hierarchy — associations under district authorities under the national agency; plan and fact roll up by level."},
+ {img:"slides/03-users.png",t:"Water users & associations",n:"Every farm is registered with its plots, area and crops, managed by the water-user association."},
+ {img:"slides/04-plots.png",t:"Plots, crops & areas",n:"For each plot we record the crop and area; the crop and its hydromodule zone set the water norm."},
+ {img:"slides/05-map.png",t:"GIS map & layers",n:"Reservoir, canals and plots as live layers over the map; plots are coloured by crop."},
+ {img:"slides/06-requests.png",t:"Water requests & planning",n:"A water request becomes a plan — an invoice in plan status with zero debt yet."},
+ {img:"slides/07-hydromodule.png",t:"Irrigation plan & hydromodule norms",n:"The per-plot plan = district norm (q) × plot area, decade by decade, using the plot's hydromodule zone."},
+ {img:"slides/08-readings.png",t:"Meter readings & acceptance act",n:"Delivered volumes are captured by readings — manual or from sensors — feeding the water-acceptance act."},
+ {img:"slides/09-dispatching.png",t:"Dispatching & water balance",n:"Daily delivery per canal, plan versus actual, with the water balance and losses."},
+ {img:"slides/10-billing.png",t:"Billing — charges & debt",n:"Debt appears only after the acceptance act: actual metered volume × tariff. Bills post to each personal account."},
+ {img:"slides/11-payments.png",t:"Payments, personal accounts & debt",n:"Users pay through the bank by personal account; ISUI reconciles payments and tracks debt and collection."},
+ {img:"slides/12-reports.png",t:"Reports & analytics",n:"Plan versus fact, collection, losses and decade summaries — filtered and exported to Excel or PDF."},
+ {img:"slides/13-audit.png",t:"Audit & security",n:"Every change is recorded; recalculation and reversal keep balances correct and fully auditable."},
+ {img:"slides/14-admin.png",t:"Administration",n:"Organizations, directories, tariffs and permissions are managed from one administration area."}
 ];
 const SAMPLES=["How is a farmer's debt calculated?","Net vs gross norm — what's the difference?","How does the per-plot plan work?","When is the membership fee charged?","Can a charge be reversed?"];
 

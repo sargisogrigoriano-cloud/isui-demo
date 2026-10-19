@@ -158,8 +158,8 @@ function speakBrowser(text, g) {
   });
 }
 async function say(text, g) {
-  // голос Gemini, если готов за 7 секунд; иначе — женский голос браузера, чтобы не было тишины
-  const url = await Promise.race([fetchVoice(text), new Promise((r) => setTimeout(() => r(null), 7000))]);
+  // голос сервера (Piper); не пришёл за 25 с — женский голос браузера, чтобы не было тишины
+  const url = await Promise.race([fetchVoice(text), new Promise((r) => setTimeout(() => r(null), 25000))]);
   if (g !== gen) return;
   if (!url) return speakBrowser(text, g);
   await new Promise((res) => { aud.muted = !sound; aud.src = url; aud.onended = res; aud.onerror = res; const p = aud.play(); if (p && p.catch) p.catch(() => res()); });
@@ -171,10 +171,16 @@ async function ask() {
   unlock(); stopAll(); touring = false; const g = gen;
   const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
   $("cap").textContent = "“" + q + "”";
-  const waitFiller = clip("presenter/filler_" + (Math.random() < 0.5 ? 0 : 1) + ".mp4");
+  const fillerSrc = "presenter/filler_" + (Math.random() < 0.5 ? 0 : 1) + ".mp4";
+  let otvetPrishel = false;
+  const waitFiller = clip(fillerSrc).then(() => {
+    // фраза сказана, а ответ ещё думается — аватар тихо «живёт» (тот же ролик по кругу без звука)
+    if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.muted = true; av.loop = true; av.play().catch(() => {}); }
+  });
   let d;
   try { d = await (await fetch(BRAIN + "ask", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
   catch (e) { d = { answer: "The assistant is unreachable right now. Please try again in a moment.", screen: "intro", steps: [] }; }
+  otvetPrishel = true; av.loop = false;
   if (g !== gen) return;
   const steps = (d.steps && d.steps.length) ? d.steps : [{ screen: d.screen || "intro", text: d.answer || "" }];
   steps.forEach((s) => fetchVoice(s.text));          // озвучка готовится, пока аватар говорит
@@ -191,14 +197,30 @@ async function ask() {
 $("ask").onclick = ask;
 $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
 
-// голосовой ввод (где браузер умеет)
+// голосовой ввод (где браузер умеет): слушает, пока человек не замолчит на 2,5 с; текст виден в поле;
+// второе нажатие на микрофон — отправить сразу
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let slushaet = null;
 if (!SR) $("mic").style.display = "none";
 else $("mic").onclick = () => {
-  unlock(); const r = new SR(); r.lang = "en-US"; r.interimResults = false; $("mic").classList.add("on"); setState("Listening");
-  r.onresult = (e) => { $("q").value = e.results[0][0].transcript; ask(); };
-  r.onend = () => $("mic").classList.remove("on"); r.onerror = () => { $("mic").classList.remove("on"); setState("Ready"); };
-  r.start();
+  unlock();
+  if (slushaet) { slushaet.stop(); return; }
+  const r = new SR(); slushaet = r; r.lang = "en-US"; r.continuous = true; r.interimResults = true;
+  let gotovo = "", tishina = null;
+  $("mic").classList.add("on"); setState("Listening…"); $("q").value = ""; $("q").placeholder = "Listening… speak your question";
+  const zhdat = () => { clearTimeout(tishina); tishina = setTimeout(() => r.stop(), 2500); };
+  r.onresult = (e) => {
+    let promezh = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) gotovo += e.results[i][0].transcript + " "; else promezh += e.results[i][0].transcript;
+    }
+    $("q").value = (gotovo + promezh).trim(); zhdat();
+  };
+  r.onspeechstart = zhdat;
+  r.onend = () => { clearTimeout(tishina); slushaet = null; $("mic").classList.remove("on"); $("q").placeholder = "e.g. How is a farmer's debt calculated?";
+    if ($("q").value.trim()) ask(); else setState("Ready"); };
+  r.onerror = () => { clearTimeout(tishina); };
+  r.start(); tishina = setTimeout(() => r.stop(), 8000);   // если не начал говорить за 8 с
 };
 if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
 showScreen("intro"); scr.pause();

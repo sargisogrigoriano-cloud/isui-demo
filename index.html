@@ -21,7 +21,7 @@ main{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,1fr);gap:18px
 .screen{position:relative;aspect-ratio:16/9;background:#eef3f7}
 .screen video{width:100%;height:100%;object-fit:contain;display:block;background:#eef3f7}
 .badge{position:absolute;left:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border-radius:8px;padding:6px 12px;font-size:16px;font-weight:600}
-.fs{position:absolute;right:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border:0;border-radius:8px;padding:6px 11px;font-size:18px;cursor:pointer}
+.fs{position:absolute;right:12px;bottom:12px;background:rgba(20,38,58,.82);color:#fff;border:0;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:600;cursor:pointer}
 .screen:fullscreen{background:#fff}.screen:fullscreen video{height:100vh}
 .chapters{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
 .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:14.5px;cursor:pointer;color:var(--ink2)}
@@ -63,7 +63,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 <main>
   <section>
     <div class="card">
-      <div class="screen"><video id="scr" muted playsinline preload="auto" poster="ekrany/intro.jpg"></video><div class="badge" id="badge">IMIS</div><button class="fs" id="fs" title="Full screen / Во весь экран">⛶</button></div>
+      <div class="screen"><video id="scr" muted playsinline preload="auto" poster="ekrany/intro.jpg"></video><div class="badge" id="badge">IMIS</div><button class="fs" id="fs" title="Full screen / Во весь экран">Full screen</button></div>
       <div class="chapters" id="chapters"></div>
     </div>
   </section>
@@ -269,6 +269,7 @@ function pokazatYazyk() {
   $("ask_h").textContent = ru ? "Задайте вопрос об ИСУИ (IMIS)" : "Ask anything about IMIS";
   $("ask_hint").textContent = ru ? "Наберите или скажите вопрос. EN / RU — язык разговора. Ассистентка ответит голосом и покажет нужный раздел системы." : "Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.";
   $("ask").textContent = ru ? "Спросить" : "Ask";
+  $("fs").textContent = ru ? "Во весь экран" : "Full screen";
   $("q").placeholder = ru ? "например: Как считается долг водопользователя?" : "e.g. How is a farmer's debt calculated?";
   const sm = $("samples"); sm.innerHTML = "";
   (ru ? SAMPLES_RU : SAMPLES).forEach((t) => { const c = document.createElement("span"); c.className = "sample"; c.textContent = t; c.onclick = () => { $("q").value = t; ask(); }; sm.appendChild(c); });

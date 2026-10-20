@@ -89,8 +89,17 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
 const BRAINS = ["https://turned-charger-athletics-infants.trycloudflare.com/", "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/"];
+// адрес сервера ассистентки меняется при его перезапуске; сервер сам пишет новый в brain.json этого же сайта
+const adresGotov = Promise.race([
+  fetch("brain.json?v=" + Date.now()).then((r) => (r.ok ? r.json() : null)).then((d) => {
+    const u = d && d.url;
+    if (u && /^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/$/.test(u) && !BRAINS.includes(u)) BRAINS.unshift(u);
+  }).catch(() => {}),
+  new Promise((r) => setTimeout(r, 4000)),
+]);
 let bazaBrain = 0;
 async function kBrain(put, opts) {
+  await adresGotov;
   let posl = null;
   for (let k = 0; k < BRAINS.length; k++) {
     const i = (bazaBrain + k) % BRAINS.length;

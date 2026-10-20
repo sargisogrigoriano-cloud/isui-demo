@@ -72,9 +72,9 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
       <div class="ctrl"><button class="btn" id="prev">◀</button><button class="btn p" id="play">▶ Play</button><button class="btn" id="next">▶▶</button><button class="btn" id="snd" title="Sound">🔊</button><span class="num" id="num">0 / 18</span></div>
     </div>
     <div class="card ask">
-      <h2>Ask anything about IMIS</h2>
-      <p class="hint">Type or speak your question in English or Russian (EN / RU next to the microphone). The assistant answers by voice in the same language and shows the matching part of the system.</p>
-      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the spoken question">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
+      <h2 id="ask_h">Ask anything about IMIS</h2>
+      <p class="hint" id="ask_hint">Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.</p>
+      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the conversation / Язык разговора" style="font-weight:700;min-width:52px">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
       <div class="samples" id="samples"></div>
       <div class="ans" id="ans"></div>
     </div>
@@ -205,7 +205,7 @@ function gotovyy(q) {
   // короткий вопрос («water limit») — достаточно совпадения главных слов
   return ball >= 0.75 || (a.size <= 3 && ball >= 0.5) ? luchshiy : null;
 }
-const poRusski = (q) => /[а-яё]/i.test(q) || micYazyk === "ru";
+const poRusski = (q) => micYazyk === "ru" || /[а-яё]/i.test(q);
 function poTeme(q) {
   const ru = poRusski(q);
   for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: ru && it.ans_ru ? it.ans_ru : it.ans, screen: it.screen, steps: [] };
@@ -230,7 +230,7 @@ async function ask() {
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";
   if (!d) try {
-    const r = await kBrain("ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) });
+    const r = await kBrain("ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q, yazyk: ru ? "ru" : "en" }) });
     if (!r.ok) prichina = "server " + r.status;
     d = await r.json();
   }
@@ -258,7 +258,21 @@ $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
 
 // голосовой ввод (где браузер умеет): слушает, пока человек не замолчит на 2,5 с; текст виден в поле;
 // второе нажатие на микрофон — отправить сразу
-$("yaz").onclick = () => { micYazyk = micYazyk === "en" ? "ru" : "en"; $("yaz").textContent = micYazyk.toUpperCase(); };
+// язык разговора: связки аватара, ответ ассистентки, распознавание речи и подписи блока вопросов
+const SAMPLES_RU = ["Как считается долг водопользователя?", "Как снимаются показания воды?", "Что делает проверка по спутнику?", "Как жалобы поднимаются выше?", "Что показывает схема связей?", "Как строится план водопользования?"];
+function pokazatYazyk() {
+  const ru = micYazyk === "ru";
+  $("yaz").textContent = ru ? "RU" : "EN";
+  $("ask_h").textContent = ru ? "Задайте вопрос об ИСУИ (IMIS)" : "Ask anything about IMIS";
+  $("ask_hint").textContent = ru ? "Наберите или скажите вопрос. EN / RU — язык разговора. Ассистентка ответит голосом и покажет нужный раздел системы." : "Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.";
+  $("ask").textContent = ru ? "Спросить" : "Ask";
+  $("q").placeholder = ru ? "например: Как считается долг водопользователя?" : "e.g. How is a farmer's debt calculated?";
+  const sm = $("samples"); sm.innerHTML = "";
+  (ru ? SAMPLES_RU : SAMPLES).forEach((t) => { const c = document.createElement("span"); c.className = "sample"; c.textContent = t; c.onclick = () => { $("q").value = t; ask(); }; sm.appendChild(c); });
+}
+$("yaz").onclick = () => { micYazyk = micYazyk === "en" ? "ru" : "en"; try { localStorage.setItem("imis_yaz", micYazyk); } catch (e) {} pokazatYazyk(); };
+try { if (localStorage.getItem("imis_yaz") === "ru") micYazyk = "ru"; } catch (e) {}
+pokazatYazyk();
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let slushaet = null;
 if (!SR) $("mic").style.display = "none";
@@ -267,7 +281,7 @@ else $("mic").onclick = () => {
   if (slushaet) { slushaet.stop(); return; }
   const r = new SR(); slushaet = r; r.lang = micYazyk === "ru" ? "ru-RU" : "en-US"; r.continuous = true; r.interimResults = true;
   let gotovo = "", tishina = null;
-  $("mic").classList.add("on"); setState("Listening…"); $("q").value = ""; $("q").placeholder = "Listening… speak your question";
+  $("mic").classList.add("on"); setState("Listening…"); $("q").value = ""; $("q").placeholder = micYazyk === "ru" ? "Слушаю… говорите вопрос" : "Listening… speak your question";
   const zhdat = () => { clearTimeout(tishina); tishina = setTimeout(() => r.stop(), 2500); };
   r.onresult = (e) => {
     let promezh = "";
@@ -277,7 +291,7 @@ else $("mic").onclick = () => {
     $("q").value = (gotovo + promezh).trim(); zhdat();
   };
   r.onspeechstart = zhdat;
-  r.onend = () => { clearTimeout(tishina); slushaet = null; $("mic").classList.remove("on"); $("q").placeholder = "e.g. How is a farmer's debt calculated?";
+  r.onend = () => { clearTimeout(tishina); slushaet = null; $("mic").classList.remove("on"); pokazatYazyk();
     if ($("q").value.trim()) ask(); else setState("Ready"); };
   r.onerror = () => { clearTimeout(tishina); };
   r.start(); tishina = setTimeout(() => r.stop(), 8000);   // если не начал говорить за 8 с

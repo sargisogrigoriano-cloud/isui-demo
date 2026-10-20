@@ -9,20 +9,22 @@
 <style>
 :root{--bg:#f4f8fb;--card:#fff;--ink:#14263a;--ink2:#4a5d70;--line:#d8e3ec;--blue:#1b9bd1;--blue2:#0f6fa0;--soft:#e8f4fa;--ok:#2e9e44}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 header{display:flex;align-items:center;gap:14px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line)}
 .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#1b9bd1,#0f6fa0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;letter-spacing:.5px}
-header h1{margin:0;font-size:18px}
-header p{margin:0;color:var(--ink2);font-size:13px}
+header h1{margin:0;font-size:22px}
+header p{margin:0;color:var(--ink2);font-size:15px}
 .start{margin-left:auto;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer}
 .start:hover{background:var(--blue2)}
-main{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(300px,1fr);gap:18px;padding:18px 22px;max-width:1500px;margin:0 auto}
+main{display:grid;grid-template-columns:minmax(0,3fr) minmax(300px,1fr);gap:18px;padding:18px 22px;max-width:1900px;margin:0 auto}
 .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .screen{position:relative;aspect-ratio:16/9;background:#eef3f7}
 .screen video{width:100%;height:100%;object-fit:contain;display:block;background:#eef3f7}
-.badge{position:absolute;left:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600}
+.badge{position:absolute;left:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border-radius:8px;padding:6px 12px;font-size:16px;font-weight:600}
+.fs{position:absolute;right:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border:0;border-radius:8px;padding:6px 11px;font-size:18px;cursor:pointer}
+.screen:fullscreen{background:#fff}.screen:fullscreen video{height:100vh}
 .chapters{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:var(--ink2)}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:14.5px;cursor:pointer;color:var(--ink2)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .side{display:flex;flex-direction:column;gap:14px}
 .presenter{position:relative;aspect-ratio:16/9;background:#dfe9f1}
@@ -32,19 +34,19 @@ main{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(300px,1fr);gap:1
 .dumaet{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(20,38,58,.78);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none}
 .dumaet.on{opacity:1}.dumaet span{animation:tochka 1.2s infinite}.dumaet span:nth-child(2){animation-delay:.2s}.dumaet span:nth-child(3){animation-delay:.4s}
 @keyframes tochka{0%,60%,100%{opacity:.2}30%{opacity:1}}
-.cap{padding:12px 14px;min-height:96px;font-size:14px;color:var(--ink)}
+.cap{padding:12px 14px;min-height:96px;font-size:17px;line-height:1.55;color:var(--ink)}
 .ctrl{display:flex;gap:8px;padding:0 14px 14px;align-items:center;flex-wrap:wrap}
 .btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--ink)}
 .btn.p{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .btn:disabled{opacity:.5;cursor:default}
 .num{margin-left:auto;color:var(--ink2);font-size:13px}
-.ask h2{margin:0;padding:12px 14px 0;font-size:15px}
-.ask p.hint{margin:4px 14px 8px;color:var(--ink2);font-size:12.5px}
+.ask h2{margin:0;padding:12px 14px 0;font-size:18px}
+.ask p.hint{margin:4px 14px 8px;color:var(--ink2);font-size:14.5px}
 .row{display:flex;gap:8px;padding:0 14px}
-.row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:14px}
+.row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:16px}
 .samples{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px}
-.sample{border:1px dashed var(--line);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--blue2);background:var(--soft)}
-.ans{margin:0 14px 14px;padding:10px 12px;border-radius:10px;background:var(--soft);font-size:14px;display:none}
+.sample{border:1px dashed var(--line);border-radius:999px;padding:5px 12px;font-size:14px;cursor:pointer;color:var(--blue2);background:var(--soft)}
+.ans{margin:0 14px 14px;padding:12px 14px;border-radius:10px;background:var(--soft);font-size:16px;line-height:1.55;display:none}
 .ans.show{display:block}
 .ans ol{margin:6px 0 0 18px;padding:0}
 .mic.on{background:#ffe9e9;border-color:#e57373}
@@ -61,7 +63,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 <main>
   <section>
     <div class="card">
-      <div class="screen"><video id="scr" muted playsinline preload="auto" poster="ekrany/intro.jpg"></video><div class="badge" id="badge">IMIS</div></div>
+      <div class="screen"><video id="scr" muted playsinline preload="auto" poster="ekrany/intro.jpg"></video><div class="badge" id="badge">IMIS</div><button class="fs" id="fs" title="Full screen / Во весь экран">⛶</button></div>
       <div class="chapters" id="chapters"></div>
     </div>
   </section>
@@ -147,6 +149,7 @@ async function play(i) {
   if (touring && i + 1 < TITLES.length) setTimeout(() => { if (g === gen) play(i + 1); }, 700);
   else touring = false;
 }
+$("fs").onclick = () => { const e = document.querySelector(".screen"); if (document.fullscreenElement) document.exitFullscreen(); else if (e.requestFullscreen) e.requestFullscreen(); else if (scr.webkitEnterFullscreen) scr.webkitEnterFullscreen(); };
 $("start").onclick = () => { unlock(); touring = true; play(0); };
 $("play").onclick = () => { unlock(); if (!av.paused && !av.loop) { stopAll(); touring = false; setState("Paused"); $("play").textContent = "▶ Play"; return; } touring = true; play(Math.max(idx, 0)); };
 $("next").onclick = () => { unlock(); touring = false; play(Math.min(idx + 1, TITLES.length - 1)); };

@@ -40,10 +40,10 @@ main{display:grid;grid-template-columns:minmax(0,5fr) minmax(240px,1fr);gap:14px
 .btn.p{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
 .btn:disabled{opacity:.5;cursor:default}
 .num{margin-left:auto;color:var(--ink2);font-size:13px}
-.ask h2{margin:0;padding:12px 14px 0;font-size:18px}
-.ask p.hint{margin:4px 14px 8px;color:var(--ink2);font-size:14.5px}
-.row{display:flex;gap:8px;padding:0 14px}
-.row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:16px}
+.ask h2{margin:0;padding:12px 14px 0;font-size:16px}
+.ask p.hint{margin:4px 14px 8px;color:var(--ink2);font-size:12.5px}
+.row{display:flex;flex-wrap:wrap;gap:8px;padding:0 14px}
+.row input{flex:1 1 100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:16px}
 .samples{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px}
 .sample{border:1px dashed var(--line);border-radius:999px;padding:5px 12px;font-size:14px;cursor:pointer;color:var(--blue2);background:var(--soft)}
 .ans{margin:0 14px 14px;padding:12px 14px;border-radius:10px;background:var(--soft);font-size:16px;line-height:1.55;display:none}
@@ -76,7 +76,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
     <div class="card ask">
       <h2 id="ask_h">Ask anything about IMIS</h2>
       <p class="hint" id="ask_hint">Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.</p>
-      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the conversation / Язык разговора" style="font-weight:700;min-width:52px">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
+      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the conversation / Язык разговора" style="font-weight:700;min-width:52px">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask" style="flex:1">Ask</button></div>
       <div class="samples" id="samples"></div>
       <div class="ans" id="ans"></div>
     </div>

@@ -268,7 +268,7 @@ function pokazatYazyk() {
   const ru = micYazyk === "ru";
   $("yaz").textContent = ru ? "RU" : "EN";
   $("ask_h").textContent = ru ? "Задайте вопрос об ИСУИ (IMIS)" : "Ask anything about IMIS";
-  $("ask_hint").textContent = ru ? "Наберите или скажите вопрос. EN / RU — язык разговора. Ассистентка ответит голосом и покажет нужный раздел системы." : "Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.";
+  $("ask_hint").style.color = ""; $("ask_hint").textContent = ru ? "Наберите или скажите вопрос. EN / RU — язык разговора. Ассистентка ответит голосом и покажет нужный раздел системы." : "Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.";
   $("ask").textContent = ru ? "Спросить" : "Ask";
   $("fs").textContent = ru ? "Во весь экран" : "Full screen";
   $("q").placeholder = ru ? "например: Как считается долг водопользователя?" : "e.g. How is a farmer's debt calculated?";
@@ -279,27 +279,53 @@ $("yaz").onclick = () => { micYazyk = micYazyk === "en" ? "ru" : "en"; try { loc
 try { if (localStorage.getItem("imis_yaz") === "ru") micYazyk = "ru"; } catch (e) {}
 pokazatYazyk();
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let slushaet = null;
-if (!SR) $("mic").style.display = "none";
-else $("mic").onclick = () => {
-  unlock();
-  if (slushaet) { slushaet.stop(); return; }
-  const r = new SR(); slushaet = r; r.lang = micYazyk === "ru" ? "ru-RU" : "en-US"; r.continuous = true; r.interimResults = true;
-  let gotovo = "", tishina = null;
-  $("mic").classList.add("on"); setState("Listening…"); $("q").value = ""; $("q").placeholder = micYazyk === "ru" ? "Слушаю… говорите вопрос" : "Listening… speak your question";
+const TELEFON = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
+let slushaet = null, micRazreshen = false;
+// сообщение о микрофоне — красным под полем вопроса, до следующего нажатия
+function micSoobshchenie(ru, en) { const h = $("ask_hint"); h.textContent = micYazyk === "ru" ? ru : en; h.style.color = "#d64545"; }
+function micOshibka(kod) {
+  if (kod === "not-allowed" || kod === "service-not-allowed" || kod === "NotAllowedError" || kod === "SecurityError")
+    micSoobshchenie("Доступ к микрофону запрещён. iPhone: Настройки → Safari → Микрофон → «Разрешить», и включите Настройки → Siri → «Диктовка». Android: нажмите замок слева от адреса → Разрешения → Микрофон → «Разрешить». Затем снова нажмите 🎤.",
+      "Microphone access is blocked. iPhone: Settings → Safari → Microphone → Allow, and turn on Settings → Siri → Dictation. Android: tap the lock left of the address → Permissions → Microphone → Allow. Then tap 🎤 again.");
+  else if (kod === "no-speech") micSoobshchenie("Речь не услышана. Нажмите 🎤 и говорите вопрос.", "No speech heard. Tap 🎤 and say your question.");
+  else if (kod === "audio-capture" || kod === "NotFoundError" || kod === "NotReadableError") micSoobshchenie("Микрофон не найден или занят другим приложением.", "No microphone found, or another app is using it.");
+  else if (kod === "network") micSoobshchenie("Для распознавания речи нужен интернет. Проверьте связь или наберите вопрос.", "Speech recognition needs internet. Check the connection or type the question.");
+  else if (kod !== "aborted") micSoobshchenie("Микрофон не включился (" + kod + "). Нажмите 🎤 ещё раз или наберите вопрос.", "The microphone did not start (" + kod + "). Tap 🎤 again or type the question.");
+}
+function slushat() {
+  const r = new SR(); slushaet = r; r.lang = micYazyk === "ru" ? "ru-RU" : "en-US";
+  // на телефонах непрерывный режим работает плохо (Safari, Chrome Android): слушаем одну фразу
+  r.continuous = !TELEFON; r.interimResults = true;
+  let tishina = null, oshibka = null;
+  $("mic").classList.add("on"); setState(micYazyk === "ru" ? "Слушаю…" : "Listening…"); $("q").value = ""; $("q").placeholder = micYazyk === "ru" ? "Слушаю… говорите вопрос" : "Listening… speak your question";
   const zhdat = () => { clearTimeout(tishina); tishina = setTimeout(() => r.stop(), 2500); };
   r.onresult = (e) => {
-    let promezh = "";
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) gotovo += e.results[i][0].transcript + " "; else promezh += e.results[i][0].transcript;
-    }
-    $("q").value = (gotovo + promezh).trim(); zhdat();
+    let t = "";
+    for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + (e.results[i].isFinal ? " " : "");
+    $("q").value = t.trim(); zhdat();
   };
   r.onspeechstart = zhdat;
+  r.onerror = (e) => { clearTimeout(tishina); oshibka = e.error; };
   r.onend = () => { clearTimeout(tishina); slushaet = null; $("mic").classList.remove("on"); pokazatYazyk();
-    if ($("q").value.trim()) ask(); else setState("Ready"); };
-  r.onerror = () => { clearTimeout(tishina); };
-  r.start(); tishina = setTimeout(() => r.stop(), 8000);   // если не начал говорить за 8 с
+    if ($("q").value.trim()) { ask(); return; }
+    setState("Ready"); if (oshibka) micOshibka(oshibka); };
+  try { r.start(); } catch (e) { slushaet = null; $("mic").classList.remove("on"); pokazatYazyk(); micOshibka(e.name || "start"); return; }
+  tishina = setTimeout(() => r.stop(), 8000);   // если не начал говорить за 8 с
+}
+$("mic").onclick = () => {
+  unlock(); pokazatYazyk();
+  if (slushaet) { slushaet.stop(); return; }
+  if (!SR) {
+    micSoobshchenie("Этот браузер не умеет распознавать речь. Откройте страницу в Safari (iPhone) или Chrome (Android), не внутри WhatsApp или Telegram. Или наберите вопрос.",
+      "This browser cannot recognise speech. Open the page in Safari (iPhone) or Chrome (Android), not inside WhatsApp or Telegram. Or type the question.");
+    return;
+  }
+  if (micRazreshen || !(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { slushat(); return; }
+  // первый раз — явный запрос «Разрешить доступ к микрофону?», потом слушание
+  setState(micYazyk === "ru" ? "Разрешите микрофон…" : "Allow the microphone…");
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((s) => {
+    s.getTracks().forEach((t) => t.stop()); micRazreshen = true; slushat();
+  }).catch((e) => { setState("Ready"); micOshibka(e.name || "not-allowed"); });
 };
 if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
 showScreen("intro"); scr.pause();

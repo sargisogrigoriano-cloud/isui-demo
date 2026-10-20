@@ -194,7 +194,7 @@ const ZVUK = {};   // текст → свой звуковой файл (без 
 for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v.steps || []).forEach((x) => (ZVUK[x.text] = x.a)); }
 (window.INTENTS || []).forEach((x) => { ZVUK[x.ans] = x.a; if (x.ans_ru) ZVUK[x.ans_ru] = x.a_ru; });
 if (window.OBSHCHIY) { ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a; ZVUK[window.OBSHCHIY.ans_ru] = window.OBSHCHIY.a_ru; }
-const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system".split(" "));
+const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system как что кто где когда почему зачем для это эти этот при если или над под без можно ли есть был была было будет его её их она они мне нам вас вам про расскажи покажи системе система систему исуи".split(" "));
 const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w));
 function gotovyy(q, ru) {
   const vse = window.LOCAL_QA || {}, lq = {};

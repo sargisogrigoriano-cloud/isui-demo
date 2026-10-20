@@ -83,7 +83,21 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
 <script>
-const BRAIN = "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/";
+// Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
+const BRAINS = ["https://turned-charger-athletics-infants.trycloudflare.com/", "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/"];
+let bazaBrain = 0;
+async function kBrain(put, opts) {
+  let posl = null;
+  for (let k = 0; k < BRAINS.length; k++) {
+    const i = (bazaBrain + k) % BRAINS.length;
+    try {
+      const r = await fetch(BRAINS[i] + put, opts);
+      if (r.status < 500) { bazaBrain = i; return r; }
+      posl = new Error("server " + r.status);
+    } catch (e) { if (e && e.name === "AbortError") throw e; posl = e; }
+  }
+  throw posl || new Error("unreachable");
+}
 const HDR = { "ngrok-skip-browser-warning": "1" };
 const KEYS = ["intro","dashboard","orgs","links","users","contracts","norms","readings","dispatch","balance","map","satellite","complaints","billing","assets","reports","admin","intro"];
 const TITLES = ["What is IMIS","Dashboard & KPI","Organizations & staff","Water objects & link scheme","Water users & plots","Contracts & requests","Norms, plan & crop rotation","Gauging stations & readings","Dispatching & ten-day summaries","Limits, water balance & losses","Map & GIS layers","Sentinel-2 & violations","Complaints & assignments","Charges & payments","Assets & directories","Reports & audit log","Permissions & mobile app","Thank you"];
@@ -141,9 +155,9 @@ $("snd").onclick = () => { sound = !sound; av.muted = !sound; aud.muted = !sound
 const audioCache = {};
 function fetchVoice(text) {
   if (audioCache[text]) return audioCache[text];
-  audioCache[text] = fetch(BRAIN + "tts", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ text }) })
+  audioCache[text] = kBrain("tts", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ text }) })
     .then((r) => r.ok ? r.json() : Promise.reject())
-    .then((d) => fetch(BRAIN + d.url, { headers: HDR })).then((r) => r.ok ? r.blob() : Promise.reject())
+    .then((d) => kBrain(d.url, { headers: HDR })).then((r) => r.ok ? r.blob() : Promise.reject())
     .then((b) => URL.createObjectURL(b)).catch(() => null);
   return audioCache[text];
 }
@@ -186,7 +200,7 @@ async function ask() {
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";
   try {
-    const r = await fetch(BRAIN + "ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) });
+    const r = await kBrain("ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) });
     if (!r.ok) prichina = "server " + r.status;
     d = await r.json();
   }

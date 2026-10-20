@@ -16,7 +16,7 @@ header h1{margin:0;font-size:19px}
 header p{margin:0;color:var(--ink2);font-size:13px}
 .start{margin-left:auto;background:var(--blue);color:#fff;border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer}
 .start:hover{background:var(--blue2)}
-main{display:grid;grid-template-columns:minmax(0,4fr) minmax(320px,1.3fr);gap:14px;padding:12px 16px;max-width:2100px;margin:0 auto}
+main{display:grid;grid-template-columns:minmax(0,4fr) minmax(340px,1.55fr);gap:14px;padding:12px 16px;max-width:2100px;margin:0 auto}
 .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .screen{position:relative;aspect-ratio:16/9;background:#eef3f7}
 .screen video{width:100%;height:100%;object-fit:contain;display:block;background:#eef3f7}
@@ -27,7 +27,7 @@ main{display:grid;grid-template-columns:minmax(0,4fr) minmax(320px,1.3fr);gap:14
 .chip{white-space:nowrap;flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 9px;font-size:11.5px;cursor:pointer;color:var(--ink2)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .side{display:flex;flex-direction:column;gap:14px}
-.presenter{position:relative;aspect-ratio:1/1;background:#dfe9f1}
+.presenter{position:relative;aspect-ratio:7/8;background:#dfe9f1}
 .presenter video{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block}
 .who{position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600}
 .state{position:absolute;right:10px;top:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--ink2)}
@@ -51,7 +51,7 @@ main{display:grid;grid-template-columns:minmax(0,4fr) minmax(320px,1.3fr);gap:14
 .ans ol{margin:6px 0 0 18px;padding:0}
 .mic.on{background:#ffe9e9;border-color:#e57373}
 footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
-@media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}header{flex-wrap:wrap;padding:10px 14px;gap:10px}header p{display:none}header h1{font-size:15px}.start{margin-left:0;width:100%;padding:9px}.chapters{flex-wrap:nowrap;overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}.chip{white-space:nowrap}.cap{min-height:0;font-size:13.5px}}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}.presenter{aspect-ratio:1/1}header{flex-wrap:wrap;padding:10px 14px;gap:10px}header p{display:none}header h1{font-size:15px}.start{margin-left:0;width:100%;padding:9px}.chapters{flex-wrap:nowrap;overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}.chip{white-space:nowrap}.cap{min-height:0;font-size:13.5px}}
 </style>
 </head>
 <body>
@@ -193,6 +193,7 @@ async function say(text, g) {
 const ZVUK = {};   // текст → свой звуковой файл (без сервера)
 for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v.steps || []).forEach((x) => (ZVUK[x.text] = x.a)); }
 (window.INTENTS || []).forEach((x) => { ZVUK[x.ans] = x.a; if (x.ans_ru) ZVUK[x.ans_ru] = x.a_ru; });
+Object.assign(ZVUK, window.ZVUK_DOP || {});
 if (window.OBSHCHIY) { ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a; ZVUK[window.OBSHCHIY.ans_ru] = window.OBSHCHIY.a_ru; }
 const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system как что кто где когда почему зачем для это эти этот при если или над под без можно ли есть был была было будет его её их она они мне нам вас вам про расскажи покажи системе система систему исуи".split(" "));
 const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w));
@@ -210,9 +211,20 @@ function gotovyy(q, ru) {
   return ball >= 0.75 || (a.size <= 3 && ball >= 0.5) ? luchshiy : null;
 }
 const poRusski = (q) => micYazyk === "ru" || /[а-яё]/i.test(q);
-function poTeme(q) {
+// знания страницы по теме; srazu=true — только темы, на которые страница отвечает сразу, не спрашивая сервер (разделы меню)
+function poTeme(q, srazu) {
   const ru = poRusski(q);
-  for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: ru && it.ans_ru ? it.ans_ru : it.ans, screen: it.screen, steps: [] };
+  if (srazu) {
+    // вопрос сразу про несколько разделов меню («что в аналитике и реестрах») — ответ по каждому названному разделу
+    const razdely = (window.INTENTS || []).filter((it) => it.srazu && !it.steps && new RegExp(it.re, "i").test(q) && (!it.nado || new RegExp(it.nado, "i").test(q)));
+    if (razdely.length > 1 && !/кажд|все\s|всех|each|every|\ball\b/i.test(q))
+      return { answer: ru ? "Расскажу по этим разделам." : "Here are those sections.", screen: razdely[0].screen, steps: razdely.map((it) => ({ screen: it.screen, text: ru ? it.ans_ru : it.ans })) };
+  }
+  for (const it of window.INTENTS || []) {
+    if (srazu && (!it.srazu || (it.nado && !new RegExp(it.nado, "i").test(q)))) continue;
+    if (new RegExp(it.re, "i").test(q)) return { answer: ru && it.ans_ru ? it.ans_ru : it.ans, screen: it.screen, steps: (ru ? it.steps_ru : it.steps) || [] };
+  }
+  if (srazu) return null;
   const o = window.OBSHCHIY; return o ? { answer: ru ? o.ans_ru : o.ans, screen: "intro", steps: [] } : null;
 }
 
@@ -229,7 +241,7 @@ async function ask() {
     // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
     if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = ru ? "Думаю — проверяю справочник и систему…" : "Thinking — checking the IMIS handbook and the system…"; $("dumaet").firstChild.textContent = ru ? "Думаю" : "Thinking"; av.pause(); $("dumaet").classList.add("on"); }
   });
-  let d = gotovyy(q, ru);
+  let d = gotovyy(q, ru) || poTeme(q, true);
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";

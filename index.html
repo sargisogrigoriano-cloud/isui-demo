@@ -200,7 +200,8 @@ function gotovyy(q) {
   const a = new Set(slova(q)); if (a.size < 2) return null;
   let luchshiy = null, ball = 0;
   for (const k in lq) { const b = new Set(slova(k)); let o = 0; a.forEach((w) => b.has(w) && o++); const j = o / (a.size + b.size - o); if (j > ball) { ball = j; luchshiy = lq[k]; } }
-  return ball >= 0.75 ? luchshiy : null;
+  // короткий вопрос («water limit») — достаточно совпадения главных слов
+  return ball >= 0.75 || (a.size <= 3 && ball >= 0.5) ? luchshiy : null;
 }
 function poTeme(q) {
   for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: it.ans, screen: it.screen, steps: [] };
@@ -229,7 +230,8 @@ async function ask() {
     d = await r.json();
   }
   catch (e) { prichina = prichina || (e && e.name === "AbortError" ? "timeout 70 s" : "network: " + (e && e.message ? e.message : e)); }
-  if (!d || !d.answer) d = poTeme(q) || { answer: "Please ask me about any part of IMIS.", screen: "intro", steps: [] };   // сервер не ответил — знания страницы
+  // сервер не ответил или вернул лишь общую заготовку (zapas) — отвечают знания страницы по теме вопроса
+  if (!d || !d.answer || d.zapas) { const t = poTeme(q); if (t && t.answer !== (window.OBSHCHIY || {}).ans) d = t; else if (!d || !d.answer) d = t || { answer: "Please ask me about any part of IMIS.", screen: "intro", steps: [] }; }
   clearTimeout(tm);
   otvetPrishel = true; $("dumaet").classList.remove("on");
   if (g !== gen) return;

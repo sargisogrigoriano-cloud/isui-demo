@@ -114,6 +114,7 @@ const SAMPLES = ["How is a farmer's debt calculated?","How are water readings ta
 const $ = (id) => document.getElementById(id);
 const scr = $("scr"), av = $("av"), aud = $("aud");
 let idx = -1, touring = false, gen = 0, sound = true;
+let yazOtveta = "en";   // язык текущего ответа ассистентки — по нему подписи экранов
 
 // главы
 TITLES.forEach((t, i) => { const c = document.createElement("span"); c.className = "chip"; c.textContent = (i + 1) + ". " + t; c.onclick = () => { unlock(); touring = false; play(i); }; $("chapters").appendChild(c); });
@@ -122,7 +123,7 @@ SAMPLES.forEach((s) => { const c = document.createElement("span"); c.className =
 function setState(t) { $("state").textContent = t; }
 function showScreen(key) {
   key = SCREEN_TITLE[key] ? key : "intro";
-  $("badge").textContent = (micYazyk === "ru" && !touring ? SCREEN_TITLE_RU : SCREEN_TITLE)[key];
+  $("badge").textContent = (yazOtveta === "ru" && !touring ? SCREEN_TITLE_RU : SCREEN_TITLE)[key];
   if (scr.dataset.k !== key) { scr.dataset.k = key; scr.src = "ekrany/" + key + ".mp4"; scr.poster = "ekrany/" + key + ".jpg"; }
   try { scr.currentTime = 0; } catch (e) {}
   scr.play().catch(() => {});
@@ -199,7 +200,8 @@ for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v
 Object.assign(ZVUK, window.ZVUK_DOP || {});
 if (window.OBSHCHIY) { ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a; ZVUK[window.OBSHCHIY.ans_ru] = window.OBSHCHIY.a_ru; }
 const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system как что кто где когда почему зачем для это эти этот при если или над под без можно ли есть был была было будет его её их она они мне нам вас вам про расскажи покажи системе система систему исуи".split(" "));
-const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w));
+// русские слова — по основе (первые 6 букв): «тарировка», «тарировки», «тарировку» совпадают
+const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w)).map((w) => (/[а-яё]/.test(w) ? w.slice(0, 6) : w));
 function gotovyy(q, ru) {
   const vse = window.LOCAL_QA || {}, lq = {};
   for (const k in vse) { const r = k.endsWith("|ru"); if (r === !!ru) lq[r ? k.slice(0, -3) : k] = vse[k]; }
@@ -233,7 +235,7 @@ function poTeme(q, srazu) {
 
 async function ask() {
   const q = $("q").value.trim(); if (!q) return;
-  const ru = poRusski(q);
+  const ru = poRusski(q); yazOtveta = ru ? "ru" : "en";
   unlock(); stopAll(); touring = false; const g = gen;
   const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
   $("cap").textContent = "“" + q + "”";

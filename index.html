@@ -73,8 +73,8 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
     </div>
     <div class="card ask">
       <h2>Ask anything about IMIS</h2>
-      <p class="hint">Type or speak your question. The assistant answers by voice and shows the matching part of the system.</p>
-      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
+      <p class="hint">Type or speak your question in English or Russian (EN / RU next to the microphone). The assistant answers by voice in the same language and shows the matching part of the system.</p>
+      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the spoken question">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask">Ask</button></div>
       <div class="samples" id="samples"></div>
       <div class="ans" id="ans"></div>
     </div>
@@ -84,6 +84,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 <audio id="aud" playsinline preload="auto"></audio>
 <script src="qa_data.js"></script>
 <script>
+let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
 const BRAINS = ["https://turned-charger-athletics-infants.trycloudflare.com/", "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/"];
 let bazaBrain = 0;
@@ -188,7 +189,8 @@ async function say(text, g) {
 // ── мозг страницы (как у Aquora) ──
 const ZVUK = {};   // текст → свой звуковой файл (без сервера)
 for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v.steps || []).forEach((x) => (ZVUK[x.text] = x.a)); }
-(window.INTENTS || []).forEach((x) => (ZVUK[x.ans] = x.a)); if (window.OBSHCHIY) ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a;
+(window.INTENTS || []).forEach((x) => { ZVUK[x.ans] = x.a; if (x.ans_ru) ZVUK[x.ans_ru] = x.a_ru; });
+if (window.OBSHCHIY) { ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a; ZVUK[window.OBSHCHIY.ans_ru] = window.OBSHCHIY.a_ru; }
 const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system".split(" "));
 const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w));
 function gotovyy(q) {
@@ -203,9 +205,11 @@ function gotovyy(q) {
   // короткий вопрос («water limit») — достаточно совпадения главных слов
   return ball >= 0.75 || (a.size <= 3 && ball >= 0.5) ? luchshiy : null;
 }
+const poRusski = (q) => /[а-яё]/i.test(q) || micYazyk === "ru";
 function poTeme(q) {
-  for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: it.ans, screen: it.screen, steps: [] };
-  return window.OBSHCHIY ? { answer: window.OBSHCHIY.ans, screen: "intro", steps: [] } : null;
+  const ru = poRusski(q);
+  for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: ru && it.ans_ru ? it.ans_ru : it.ans, screen: it.screen, steps: [] };
+  const o = window.OBSHCHIY; return o ? { answer: ru ? o.ans_ru : o.ans, screen: "intro", steps: [] } : null;
 }
 
 async function ask() {
@@ -213,14 +217,15 @@ async function ask() {
   unlock(); stopAll(); touring = false; const g = gen;
   const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
   $("cap").textContent = "“" + q + "”";
-  const fillerSrc = "presenter/filler_" + (Math.random() < 0.5 ? 0 : 1) + ".mp4";
+  const fillerSrc = "presenter/filler_" + (ru ? "ru_" : "") + (Math.random() < 0.5 ? 0 : 1) + ".mp4";
   let otvetPrishel = false;
   const waitFiller = clip(fillerSrc).then(() => {
     // фраза сказана, а ответ ещё думается — аватар тихо «живёт» (тот же ролик по кругу без звука)
     // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
-    if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.pause(); $("dumaet").classList.add("on"); }
+    if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = ru ? "Думаю — проверяю справочник и систему…" : "Thinking — checking the IMIS handbook and the system…"; $("dumaet").firstChild.textContent = ru ? "Думаю" : "Thinking"; av.pause(); $("dumaet").classList.add("on"); }
   });
-  let d = gotovyy(q);
+  const ru = poRusski(q);
+  let d = ru ? null : gotovyy(q);
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";
@@ -242,7 +247,7 @@ async function ask() {
   if (d.prichina) { const m = document.createElement("div"); m.style.cssText = "font-size:11px;color:#8a99a8;margin-top:6px"; m.textContent = "(" + d.prichina + ")"; box.appendChild(m); }
   if (d.steps && d.steps.length) { const ol = document.createElement("ol"); d.steps.forEach((s) => { const li = document.createElement("li"); li.textContent = s.text; ol.appendChild(li); }); box.appendChild(ol); }
   await waitFiller; if (g !== gen) return;
-  setState("Assistant"); await clip("presenter/handoff.mp4"); if (g !== gen) return;
+  setState("Assistant"); await clip(ru ? "presenter/handoff_ru.mp4" : "presenter/handoff.mp4"); if (g !== gen) return;
   av.pause();
   if (d.steps && d.steps.length) { $("cap").textContent = d.answer; await say(d.answer, g); }
   for (const s of steps) { if (g !== gen) return; showScreen(s.screen); $("cap").textContent = s.text; await say(s.text, g); }
@@ -253,13 +258,14 @@ $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
 
 // голосовой ввод (где браузер умеет): слушает, пока человек не замолчит на 2,5 с; текст виден в поле;
 // второе нажатие на микрофон — отправить сразу
+$("yaz").onclick = () => { micYazyk = micYazyk === "en" ? "ru" : "en"; $("yaz").textContent = micYazyk.toUpperCase(); };
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let slushaet = null;
 if (!SR) $("mic").style.display = "none";
 else $("mic").onclick = () => {
   unlock();
   if (slushaet) { slushaet.stop(); return; }
-  const r = new SR(); slushaet = r; r.lang = "en-US"; r.continuous = true; r.interimResults = true;
+  const r = new SR(); slushaet = r; r.lang = micYazyk === "ru" ? "ru-RU" : "en-US"; r.continuous = true; r.interimResults = true;
   let gotovo = "", tishina = null;
   $("mic").classList.add("on"); setState("Listening…"); $("q").value = ""; $("q").placeholder = "Listening… speak your question";
   const zhdat = () => { clearTimeout(tishina); tishina = setTimeout(() => r.stop(), 2500); };

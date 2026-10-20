@@ -82,6 +82,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 </main>
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
+<script src="qa_data.js"></script>
 <script>
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
 const BRAINS = ["https://turned-charger-athletics-infants.trycloudflare.com/", "https://quake-occupier-semisoft.ngrok-free.dev/imis-brain/"];
@@ -175,6 +176,7 @@ function speakBrowser(text, g) {
   });
 }
 async function say(text, g) {
+  if (ZVUK[text]) { await new Promise((res) => { aud.muted = !sound; aud.src = "qa/" + ZVUK[text] + ".mp3"; aud.onended = res; aud.onerror = res; const p = aud.play(); if (p && p.catch) p.catch(() => res()); }); return; }
   // голос сервера (Piper); не пришёл за 25 с — женский голос браузера, чтобы не было тишины
   const url = await Promise.race([fetchVoice(text), new Promise((r) => setTimeout(() => r(null), 25000))]);
   if (g !== gen) return;
@@ -183,6 +185,28 @@ async function say(text, g) {
 }
 
 // вопрос: «One moment…» → ответ сервера → «My assistant will now answer…» → голос ассистентки с экранами
+// ── мозг страницы (как у Aquora) ──
+const ZVUK = {};   // текст → свой звуковой файл (без сервера)
+for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v.steps || []).forEach((x) => (ZVUK[x.text] = x.a)); }
+(window.INTENTS || []).forEach((x) => (ZVUK[x.ans] = x.a)); if (window.OBSHCHIY) ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a;
+const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system".split(" "));
+const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w));
+function gotovyy(q) {
+  const lq = window.LOCAL_QA || {};
+  const n = q.toLowerCase().replace(/\s+/g, " ").trim();
+  if (lq[n]) return lq[n];
+  const n2 = n.replace(/[?!.]+$/, ""); for (const k in lq) if (k.replace(/[?!.]+$/, "") === n2) return lq[k];
+  // похожий по смыслу: совпадение значимых слов
+  const a = new Set(slova(q)); if (a.size < 2) return null;
+  let luchshiy = null, ball = 0;
+  for (const k in lq) { const b = new Set(slova(k)); let o = 0; a.forEach((w) => b.has(w) && o++); const j = o / (a.size + b.size - o); if (j > ball) { ball = j; luchshiy = lq[k]; } }
+  return ball >= 0.6 ? luchshiy : null;
+}
+function poTeme(q) {
+  for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: it.ans, screen: it.screen, steps: [] };
+  return window.OBSHCHIY ? { answer: window.OBSHCHIY.ans, screen: "intro", steps: [] } : null;
+}
+
 async function ask() {
   const q = $("q").value.trim(); if (!q) return;
   unlock(); stopAll(); touring = false; const g = gen;
@@ -195,23 +219,23 @@ async function ask() {
     // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
     if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.pause(); $("dumaet").classList.add("on"); }
   });
-  let d;
+  let d = gotovyy(q);
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";
-  try {
+  if (!d) try {
     const r = await kBrain("ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) });
     if (!r.ok) prichina = "server " + r.status;
     d = await r.json();
   }
   catch (e) { prichina = prichina || (e && e.name === "AbortError" ? "timeout 70 s" : "network: " + (e && e.message ? e.message : e)); }
-  if (!d || !d.answer) d = { answer: "Sorry, I could not get the answer this time. Please ask again.", screen: "intro", steps: [], prichina };
+  if (!d || !d.answer) d = poTeme(q) || { answer: "Please ask me about any part of IMIS.", screen: "intro", steps: [] };   // сервер не ответил — знания страницы
   clearTimeout(tm);
   otvetPrishel = true; $("dumaet").classList.remove("on");
   if (g !== gen) return;
   const steps = (d.steps && d.steps.length) ? d.steps : [{ screen: d.screen || "intro", text: d.answer || "" }];
-  steps.forEach((s) => fetchVoice(s.text));          // озвучка готовится, пока аватар говорит
-  if (d.steps && d.steps.length) fetchVoice(d.answer);
+  steps.forEach((s) => ZVUK[s.text] || fetchVoice(s.text));          // озвучка готовится, пока аватар говорит
+  if (d.steps && d.steps.length && !ZVUK[d.answer]) fetchVoice(d.answer);
   box.innerHTML = ""; const p = document.createElement("div"); p.textContent = d.answer || ""; box.appendChild(p);
   if (d.prichina) { const m = document.createElement("div"); m.style.cssText = "font-size:11px;color:#8a99a8;margin-top:6px"; m.textContent = "(" + d.prichina + ")"; box.appendChild(m); }
   if (d.steps && d.steps.length) { const ol = document.createElement("ol"); d.steps.forEach((s) => { const li = document.createElement("li"); li.textContent = s.text; ol.appendChild(li); }); box.appendChild(ol); }

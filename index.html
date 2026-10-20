@@ -29,6 +29,9 @@ main{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(300px,1fr);gap:1
 .presenter video{width:100%;height:100%;object-fit:cover;display:block}
 .who{position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600}
 .state{position:absolute;right:10px;top:10px;background:rgba(255,255,255,.92);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--ink2)}
+.dumaet{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(20,38,58,.78);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none}
+.dumaet.on{opacity:1}.dumaet span{animation:tochka 1.2s infinite}.dumaet span:nth-child(2){animation-delay:.2s}.dumaet span:nth-child(3){animation-delay:.4s}
+@keyframes tochka{0%,60%,100%{opacity:.2}30%{opacity:1}}
 .cap{padding:12px 14px;min-height:96px;font-size:14px;color:var(--ink)}
 .ctrl{display:flex;gap:8px;padding:0 14px 14px;align-items:center;flex-wrap:wrap}
 .btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--ink)}
@@ -64,7 +67,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
   </section>
   <aside class="side">
     <div class="card">
-      <div class="presenter"><video id="av" playsinline preload="auto" poster="presenter/poster.jpg"></video><div class="who">Sargis Grigorian · IMIS</div><div class="state" id="state">Ready</div></div>
+      <div class="presenter"><video id="av" playsinline preload="auto" poster="presenter/poster.jpg"></video><div class="who">Sargis Grigorian · IMIS</div><div class="dumaet" id="dumaet">Thinking<span>.</span><span>.</span><span>.</span></div><div class="state" id="state">Ready</div></div>
       <div class="cap" id="cap">Press “Start the guided tour”. I will walk you through every part of IMIS on the real system. You can stop me at any time and ask a question.</div>
       <div class="ctrl"><button class="btn" id="prev">◀</button><button class="btn p" id="play">▶ Play</button><button class="btn" id="next">▶▶</button><button class="btn" id="snd" title="Sound">🔊</button><span class="num" id="num">0 / 18</span></div>
     </div>
@@ -104,7 +107,7 @@ function showScreen(key) {
   scr.play().catch(() => {});
 }
 function markChip(i) { [...$("chapters").children].forEach((c, j) => c.classList.toggle("on", j === i)); $("num").textContent = (i + 1) + " / " + TITLES.length; }
-function stopAll() { gen++; try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
+function stopAll() { gen++; const dm = document.getElementById("dumaet"); if (dm) dm.classList.remove("on"); try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
 
 // разблокировать звук на телефонах (первое нажатие)
 let unlocked = false;
@@ -175,7 +178,8 @@ async function ask() {
   let otvetPrishel = false;
   const waitFiller = clip(fillerSrc).then(() => {
     // фраза сказана, а ответ ещё думается — аватар тихо «живёт» (тот же ролик по кругу без звука)
-    if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.muted = true; av.loop = true; av.play().catch(() => {}); }
+    // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
+    if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.pause(); $("dumaet").classList.add("on"); }
   });
   let d;
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
@@ -183,7 +187,7 @@ async function ask() {
   try { d = await (await fetch(BRAIN + "ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
   catch (e) { d = { answer: "Sorry, I could not get the answer this time. Please ask again.", screen: "intro", steps: [] }; }
   clearTimeout(tm);
-  otvetPrishel = true; av.loop = false;
+  otvetPrishel = true; $("dumaet").classList.remove("on");
   if (g !== gen) return;
   const steps = (d.steps && d.steps.length) ? d.steps : [{ screen: d.screen || "intro", text: d.answer || "" }];
   steps.forEach((s) => fetchVoice(s.text));          // озвучка готовится, пока аватар говорит

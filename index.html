@@ -184,8 +184,14 @@ async function ask() {
   let d;
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
-  try { d = await (await fetch(BRAIN + "ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
-  catch (e) { d = { answer: "Sorry, I could not get the answer this time. Please ask again.", screen: "intro", steps: [] }; }
+  let prichina = "";
+  try {
+    const r = await fetch(BRAIN + "ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) });
+    if (!r.ok) prichina = "server " + r.status;
+    d = await r.json();
+  }
+  catch (e) { prichina = prichina || (e && e.name === "AbortError" ? "timeout 70 s" : "network: " + (e && e.message ? e.message : e)); }
+  if (!d || !d.answer) d = { answer: "Sorry, I could not get the answer this time. Please ask again.", screen: "intro", steps: [], prichina };
   clearTimeout(tm);
   otvetPrishel = true; $("dumaet").classList.remove("on");
   if (g !== gen) return;
@@ -193,6 +199,7 @@ async function ask() {
   steps.forEach((s) => fetchVoice(s.text));          // озвучка готовится, пока аватар говорит
   if (d.steps && d.steps.length) fetchVoice(d.answer);
   box.innerHTML = ""; const p = document.createElement("div"); p.textContent = d.answer || ""; box.appendChild(p);
+  if (d.prichina) { const m = document.createElement("div"); m.style.cssText = "font-size:11px;color:#8a99a8;margin-top:6px"; m.textContent = "(" + d.prichina + ")"; box.appendChild(m); }
   if (d.steps && d.steps.length) { const ol = document.createElement("ol"); d.steps.forEach((s) => { const li = document.createElement("li"); li.textContent = s.text; ol.appendChild(li); }); box.appendChild(ol); }
   await waitFiller; if (g !== gen) return;
   setState("Assistant"); await clip("presenter/handoff.mp4"); if (g !== gen) return;

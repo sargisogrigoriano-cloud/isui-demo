@@ -178,8 +178,11 @@ async function ask() {
     if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = "Thinking — checking the IMIS handbook and the system…"; av.muted = true; av.loop = true; av.play().catch(() => {}); }
   });
   let d;
-  try { d = await (await fetch(BRAIN + "ask", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
-  catch (e) { d = { answer: "The assistant is unreachable right now. Please try again in a moment.", screen: "intro", steps: [] }; }
+  // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
+  const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
+  try { d = await (await fetch(BRAIN + "ask", { method: "POST", signal: stop.signal, headers: Object.assign({ "Content-Type": "application/json" }, HDR), body: JSON.stringify({ q }) })).json(); }
+  catch (e) { d = { answer: "Sorry, I could not get the answer this time. Please ask again.", screen: "intro", steps: [] }; }
+  clearTimeout(tm);
   otvetPrishel = true; av.loop = false;
   if (g !== gen) return;
   const steps = (d.steps && d.steps.length) ? d.steps : [{ screen: d.screen || "intro", text: d.answer || "" }];

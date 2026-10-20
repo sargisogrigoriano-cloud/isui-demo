@@ -214,6 +214,7 @@ function poTeme(q) {
 
 async function ask() {
   const q = $("q").value.trim(); if (!q) return;
+  const ru = poRusski(q);
   unlock(); stopAll(); touring = false; const g = gen;
   const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
   $("cap").textContent = "“" + q + "”";
@@ -224,7 +225,6 @@ async function ask() {
     // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
     if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = ru ? "Думаю — проверяю справочник и систему…" : "Thinking — checking the IMIS handbook and the system…"; $("dumaet").firstChild.textContent = ru ? "Думаю" : "Thinking"; av.pause(); $("dumaet").classList.add("on"); }
   });
-  const ru = poRusski(q);
   let d = ru ? null : gotovyy(q);
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);

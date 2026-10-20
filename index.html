@@ -200,7 +200,7 @@ function gotovyy(q) {
   const a = new Set(slova(q)); if (a.size < 2) return null;
   let luchshiy = null, ball = 0;
   for (const k in lq) { const b = new Set(slova(k)); let o = 0; a.forEach((w) => b.has(w) && o++); const j = o / (a.size + b.size - o); if (j > ball) { ball = j; luchshiy = lq[k]; } }
-  return ball >= 0.6 ? luchshiy : null;
+  return ball >= 0.75 ? luchshiy : null;
 }
 function poTeme(q) {
   for (const it of window.INTENTS || []) if (new RegExp(it.re, "i").test(q)) return { answer: it.ans, screen: it.screen, steps: [] };

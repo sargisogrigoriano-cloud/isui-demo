@@ -20,11 +20,11 @@ main{display:grid;grid-template-columns:minmax(0,4fr) minmax(260px,1fr);gap:14px
 .card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .screen{position:relative;aspect-ratio:16/9;background:#eef3f7}
 .screen video{width:100%;height:100%;object-fit:contain;display:block;background:#eef3f7}
-.badge{position:absolute;left:12px;top:12px;background:rgba(20,38,58,.82);color:#fff;border-radius:8px;padding:6px 12px;font-size:16px;font-weight:600}
-.fs{position:absolute;right:12px;bottom:12px;background:rgba(20,38,58,.82);color:#fff;border:0;border-radius:8px;padding:7px 12px;font-size:14px;font-weight:600;cursor:pointer}
+.badge{position:absolute;left:10px;top:10px;background:rgba(20,38,58,.72);color:#fff;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600}
+.fs{position:absolute;right:10px;bottom:10px;background:rgba(20,38,58,.72);color:#fff;border:0;border-radius:6px;padding:4px 9px;font-size:12px;font-weight:600;cursor:pointer}
 .screen:fullscreen{background:#fff}.screen:fullscreen video{height:100vh}
-.chapters{display:flex;flex-wrap:wrap;gap:6px;padding:12px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:14.5px;cursor:pointer;color:var(--ink2)}
+.chapters{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:6px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.chip{white-space:nowrap;flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 9px;font-size:11.5px;cursor:pointer;color:var(--ink2)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .side{display:flex;flex-direction:column;gap:14px}
 .presenter{position:relative;aspect-ratio:16/9;background:#dfe9f1}
@@ -124,7 +124,7 @@ function showScreen(key) {
   try { scr.currentTime = 0; } catch (e) {}
   scr.play().catch(() => {});
 }
-function markChip(i) { [...$("chapters").children].forEach((c, j) => c.classList.toggle("on", j === i)); $("num").textContent = (i + 1) + " / " + TITLES.length; }
+function markChip(i) { [...$("chapters").children].forEach((c, j) => { c.classList.toggle("on", j === i); if (j === i) c.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); }); $("num").textContent = (i + 1) + " / " + TITLES.length; }
 function stopAll() { gen++; const dm = document.getElementById("dumaet"); if (dm) dm.classList.remove("on"); try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
 
 // разблокировать звук на телефонах (первое нажатие)

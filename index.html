@@ -223,10 +223,12 @@ for (const v of Object.values(window.LOCAL_QA || {})) { ZVUK[v.answer] = v.a; (v
 (window.INTENTS || []).forEach((x) => { ZVUK[x.ans] = x.a; if (x.ans_ru) ZVUK[x.ans_ru] = x.a_ru; });
 Object.assign(ZVUK, window.ZVUK_DOP || {});
 if (window.OBSHCHIY) { ZVUK[window.OBSHCHIY.ans] = window.OBSHCHIY.a; ZVUK[window.OBSHCHIY.ans_ru] = window.OBSHCHIY.a_ru; }
-const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system как что кто где когда почему зачем для это эти этот при если или над под без можно ли есть был была было будет его её их она они мне нам вас вам про расскажи покажи системе система систему исуи такое такая такой такие такую значит означает объясни объясните скажи скажите работает работают нужен нужна нужно what's whats explain mean means work works tell страница странице страницы страницу странице разделе page".split(" "));
+const STOP = new Set("a an the is are was were be do does did can could how what who which when where why in on of to for and or with by from it its this that i you me my we our please tell about imis system как что кто где когда почему зачем для это эти этот при если или над под без можно ли есть был была было будет его её их она они мне нам вас вам про расскажи покажи системе система систему исуи такое такая такой такие такую значит означает объясни объясните скажи скажите работает работают нужен нужна нужно what's whats explain mean means work works tell страница странице страницы страницу странице разделе page водопользователь водопользователя водопользователю водопользователем водопользователи водопользователей вода воды воду водой water user users farmer farmers показывает показывают показать покажи".split(" "));
 // русские слова — по основе: без окончания и не длиннее 6 букв («кнопка/кнопки», «делает/делают», «платежах/платежей» совпадают)
 const osnova = (w) => (/[а-яё]/.test(w) ? w.replace(/(ами|ями|ого|его|ому|ему|ыми|ими|ах|ях|ов|ев|ей|ой|ий|ый|ая|яя|ое|ее|ые|ие|ую|юю|ом|ем|ет|ют|ит|ат|ят|ть|а|я|ы|и|у|ю|е|о|ь|й)$/, "").slice(0, 6) : w);
 const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w)).map(osnova);
+// русские слова совпадают и по первым пяти буквам основы («участок» — «участки»)
+const sovp = (w, b) => b.has(w) || (/[а-яё]/.test(w) && w.length >= 5 && [...b].some((x) => x.length >= 5 && x.slice(0, 5) === w.slice(0, 5)));
 function gotovyy(q, ru) {
   const vse = window.LOCAL_QA || {}, lq = {};
   for (const k in vse) { const r = k.endsWith("|ru"); if (r === !!ru) lq[r ? k.slice(0, -3) : k] = vse[k]; }
@@ -236,10 +238,10 @@ function gotovyy(q, ru) {
   // похожий по смыслу: совпадение значимых слов
   const a = new Set(slova(q));
   // одно главное слово («что такое NDVI») — только вопрос ровно с этим одним главным словом
-  if (a.size === 1) { const w = [...a][0]; for (const k in lq) { const b = new Set(slova(k)); if (b.size === 1 && b.has(w)) return lq[k]; } return null; }
+  if (a.size === 1) { const w = [...a][0]; for (const k in lq) { const b = new Set(slova(k)); if (b.size === 1 && sovp(w, b)) return lq[k]; } return null; }
   if (a.size < 2) return null;
   let luchshiy = null, ball = 0, luchshiyObshchih = 0, luchshiyRazmer = 1;
-  for (const k in lq) { const b = new Set(slova(k)); let o = 0; a.forEach((w) => b.has(w) && o++); const j = o / (a.size + b.size - o); if (j > ball) { ball = j; luchshiy = lq[k]; luchshiyObshchih = o; luchshiyRazmer = b.size; } }
+  for (const k in lq) { const b = new Set(slova(k)); let o = 0; a.forEach((w) => sovp(w, b) && o++); const j = o / (a.size + b.size - o); if (j > ball) { ball = j; luchshiy = lq[k]; luchshiyObshchih = o; luchshiyRazmer = b.size; } }
   // короткий вопрос («water limit») — достаточно совпадения главных слов
   // короткому вопросу нужно совпадение хотя бы двух главных слов — одно общее слово («такое») не делает вопросы похожими
   // длинный вопрос: почти все главные слова найденного вопроса есть в заданном

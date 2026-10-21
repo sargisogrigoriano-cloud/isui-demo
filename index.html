@@ -84,7 +84,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 </main>
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
-<script src="qa_data.js?v=1792565854"></script>
+<script src="qa_data.js?v=1792566443"></script>
 <script>
 let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
@@ -235,7 +235,9 @@ function gotovyy(q, ru, strogo) {
   for (const k in vse) { const r = k.endsWith("|ru"); if (r === !!ru) lq[r ? k.slice(0, -3) : k] = vse[k]; }
   const n = q.toLowerCase().replace(/\s+/g, " ").trim();
   if (lq[n]) return lq[n];
-  const n2 = n.replace(/[?!.]+$/, ""); for (const k in lq) if (k.replace(/[?!.]+$/, "") === n2) return lq[k];
+  const chisto = (x) => x.toLowerCase().replace(/[^a-zа-яё0-9 ]+/gi, " ").replace(/\s+/g, " ").trim();
+  const n2 = chisto(n); for (const k in lq) if (chisto(k) === n2) return lq[k];
+  if (strogo) return null;   // сразу — только дословно; остальное по смыслу решает сервер (сравнение слов теряет «не», «почему»)
   // похожий по смыслу: совпадение значимых слов
   const a = new Set(slova(q));
   // одно главное слово («что такое NDVI») — только вопрос ровно с этим одним главным словом
@@ -246,7 +248,6 @@ function gotovyy(q, ru, strogo) {
   // короткий вопрос («water limit») — достаточно совпадения главных слов
   // короткому вопросу нужно совпадение хотя бы двух главных слов — одно общее слово («такое») не делает вопросы похожими
   // длинный вопрос: почти все главные слова найденного вопроса есть в заданном
-  if (strogo) return ball >= 0.8 ? luchshiy : null;
   return ball >= 0.7 || (luchshiyObshchih >= 3 && luchshiyObshchih / luchshiyRazmer >= 0.75) || (a.size <= 3 && ball >= 0.5 && luchshiyObshchih >= 2) ? luchshiy : null;
 }
 const poRusski = (q) => micYazyk === "ru" || /[а-яё]/i.test(q);

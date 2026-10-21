@@ -331,7 +331,7 @@ async function ask() {
 }
 $("ask").onclick = ask;
 // ОТМЕНА: ассистентка не так поняла вопрос — остановить всё (ведущий, голос, экран, запрос к серверу)
-// и задать вопрос заново; текст вопроса остаётся в поле, его можно поправить.
+// и задать вопрос заново; строка вопроса очищается.
 let otmenaZaprosa = null;
 $("otmena").onclick = () => {
   stopAll();
@@ -339,9 +339,9 @@ $("otmena").onclick = () => {
   try { scr.pause(); } catch (e) {}
   $("dumaet").classList.remove("on"); $("otmena").disabled = true;
   const ru = yazOtveta === "ru";
-  $("ans").textContent = ru ? "Отменено. Поправьте вопрос и спросите снова." : "Cancelled. Edit the question and ask again.";
+  $("ans").textContent = ru ? "Отменено. Задайте вопрос заново." : "Cancelled. Ask your question again.";
   $("cap").textContent = ""; setState("Ready");
-  const q = $("q"); q.focus(); try { q.select(); } catch (e) {}
+  const q = $("q"); q.value = ""; q.focus();
 };
 $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
 

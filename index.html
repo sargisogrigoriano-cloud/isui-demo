@@ -84,7 +84,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 </main>
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
-<script src="qa_data.js?v=1792532547"></script>
+<script src="qa_data.js?v=1792565854"></script>
 <script>
 let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
@@ -229,7 +229,8 @@ const osnova = (w) => (/[а-яё]/.test(w) ? w.replace(/(ами|ями|ого|е
 const slova = (t) => (t.toLowerCase().match(/[a-zа-яё0-9]+/gi) || []).filter((w) => w.length > 2 && !STOP.has(w)).map(osnova);
 // русские слова совпадают и по первым пяти буквам основы («участок» — «участки»)
 const sovp = (w, b) => b.has(w) || (/[а-яё]/.test(w) && w.length >= 5 && [...b].some((x) => x.length >= 5 && x.slice(0, 5) === w.slice(0, 5)));
-function gotovyy(q, ru) {
+// strogo: на странице сразу — только почти дословный вопрос; свободнее — по смыслу на сервере, а это сравнение слов — запасное
+function gotovyy(q, ru, strogo) {
   const vse = window.LOCAL_QA || {}, lq = {};
   for (const k in vse) { const r = k.endsWith("|ru"); if (r === !!ru) lq[r ? k.slice(0, -3) : k] = vse[k]; }
   const n = q.toLowerCase().replace(/\s+/g, " ").trim();
@@ -245,6 +246,7 @@ function gotovyy(q, ru) {
   // короткий вопрос («water limit») — достаточно совпадения главных слов
   // короткому вопросу нужно совпадение хотя бы двух главных слов — одно общее слово («такое») не делает вопросы похожими
   // длинный вопрос: почти все главные слова найденного вопроса есть в заданном
+  if (strogo) return ball >= 0.8 ? luchshiy : null;
   return ball >= 0.7 || (luchshiyObshchih >= 3 && luchshiyObshchih / luchshiyRazmer >= 0.75) || (a.size <= 3 && ball >= 0.5 && luchshiyObshchih >= 2) ? luchshiy : null;
 }
 const poRusski = (q) => micYazyk === "ru" || /[а-яё]/i.test(q);
@@ -278,7 +280,7 @@ async function ask() {
     // фраза сказана, ответ ещё думается: аватар спокойно ждёт (последний кадр, рот закрыт), поверх — «Thinking…»
     if (!otvetPrishel && g === gen) { setState("Thinking…"); box.textContent = ru ? "Думаю — проверяю справочник и систему…" : "Thinking — checking the IMIS handbook and the system…"; $("dumaet").firstChild.textContent = ru ? "Думаю" : "Thinking"; av.pause(); $("dumaet").classList.add("on"); }
   });
-  let d = gotovyy(q, ru) || poTeme(q, true);
+  let d = gotovyy(q, ru, true) || poTeme(q, true);
   // ассистентка думает до ~35–40 с; ждём до 70 с, только потом сообщаем о сбое
   const stop = new AbortController(); const tm = setTimeout(() => stop.abort(), 70000);
   let prichina = "";
@@ -289,6 +291,7 @@ async function ask() {
   }
   catch (e) { prichina = prichina || (e && e.name === "AbortError" ? "timeout 70 s" : "network: " + (e && e.message ? e.message : e)); }
   // сервер не ответил или вернул лишь общую заготовку (zapas) — отвечают знания страницы по теме вопроса
+  if (!d || !d.answer || d.zapas) { const sl = gotovyy(q, ru); if (sl) d = sl; }   // сервер не помог — запасное сравнение слов
   if (!d || !d.answer || d.zapas) { const t = poTeme(q); if (t && t.answer !== (window.OBSHCHIY || {}).ans) d = t; else if (!d || !d.answer) d = t || { answer: "Please ask me about any part of IMIS.", screen: "intro", steps: [] }; }
   clearTimeout(tm);
   otvetPrishel = true; $("dumaet").classList.remove("on");

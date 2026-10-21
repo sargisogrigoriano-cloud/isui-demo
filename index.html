@@ -52,6 +52,7 @@ main{display:grid;grid-template-columns:minmax(0,4fr) minmax(340px,1.55fr);gap:1
 .mic.on{background:#ffe9e9;border-color:#e57373}
 footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 @media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:10px;gap:10px}.presenter{aspect-ratio:1/1}header{flex-wrap:wrap;padding:10px 14px;gap:10px}header p{display:none}header h1{font-size:15px}.start{margin-left:0;width:100%;padding:9px}.chapters{flex-wrap:nowrap;overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}.chip{white-space:nowrap}.cap{min-height:0;font-size:13.5px}}
+#otmena:disabled{opacity:.35;cursor:default}
 </style>
 </head>
 <body>
@@ -76,7 +77,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
     <div class="card ask">
       <h2 id="ask_h">Ask anything about IMIS</h2>
       <p class="hint" id="ask_hint">Type or speak your question. EN / RU — the language of the conversation. The assistant answers by voice and shows the matching part of the system.</p>
-      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the conversation / Язык разговора" style="font-weight:700;min-width:52px">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask" style="flex:1">Ask</button><button class="btn" id="otmena" style="display:none;color:#d64545;border-color:#d64545;font-weight:700">✕ Cancel</button></div>
+      <div class="row"><input id="q" placeholder="e.g. How is a farmer's debt calculated?" maxlength="300"><button class="btn" id="yaz" title="Language of the conversation / Язык разговора" style="font-weight:700;min-width:52px">EN</button><button class="btn mic" id="mic" title="Speak">🎤</button><button class="btn p" id="ask" style="flex:1">Ask</button><button class="btn" id="otmena" disabled title="Остановить ответ / Stop the answer" style="color:#d64545;border-color:#d64545;font-weight:700">✕ Cancel</button></div>
       <div class="samples" id="samples"></div>
       <div class="ans" id="ans"></div>
     </div>
@@ -287,7 +288,7 @@ async function ask() {
   const ru = poRusski(q); yazOtveta = ru ? "ru" : "en";
   unlock(); stopAll(); touring = false; const g = gen;
   const box = $("ans"); box.classList.add("show"); box.textContent = "Thinking…"; setState("Listening");
-  $("otmena").style.display = "";   // пока ассистентка думает и отвечает — можно отменить
+  $("otmena").disabled = false;   // пока ассистентка думает и отвечает — можно отменить
   $("cap").textContent = "“" + q + "”";
   const fillerSrc = "presenter/filler_" + (ru ? "ru_" : "") + (Math.random() < 0.5 ? 0 : 1) + ".mp4";
   let otvetPrishel = false;
@@ -326,7 +327,7 @@ async function ask() {
   av.pause();
   if (d.steps && d.steps.length) { showScreen(d.screen || "intro"); $("cap").textContent = d.answer; await say(d.answer, g); }
   for (const s of steps) { if (g !== gen) return; showScreen(s.screen); $("cap").textContent = s.text; await say(s.text, g, steps.length > 1); }
-  if (g === gen) { setState("Ready"); $("otmena").style.display = "none"; }
+  if (g === gen) { setState("Ready"); $("otmena").disabled = true; }
 }
 $("ask").onclick = ask;
 // ОТМЕНА: ассистентка не так поняла вопрос — остановить всё (ведущий, голос, экран, запрос к серверу)
@@ -336,7 +337,7 @@ $("otmena").onclick = () => {
   stopAll();
   try { if (otmenaZaprosa) otmenaZaprosa.abort(); } catch (e) {}
   try { scr.pause(); } catch (e) {}
-  $("dumaet").classList.remove("on"); $("otmena").style.display = "none";
+  $("dumaet").classList.remove("on"); $("otmena").disabled = true;
   const ru = yazOtveta === "ru";
   $("ans").textContent = ru ? "Отменено. Поправьте вопрос и спросите снова." : "Cancelled. Edit the question and ask again.";
   $("cap").textContent = ""; setState("Ready");

@@ -84,7 +84,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 </main>
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
-<script src="qa_data.js?v=1792566443"></script>
+<script src="qa_data.js?v=1792598071"></script>
 <script>
 let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
@@ -292,7 +292,9 @@ async function ask() {
   }
   catch (e) { prichina = prichina || (e && e.name === "AbortError" ? "timeout 70 s" : "network: " + (e && e.message ? e.message : e)); }
   // сервер не ответил или вернул лишь общую заготовку (zapas) — отвечают знания страницы по теме вопроса
-  if (!d || !d.answer || d.zapas) { const sl = gotovyy(q, ru); if (sl) d = sl; }   // сервер не помог — запасное сравнение слов
+  // сервер недоступен — запасное сравнение слов; если сервер ответил без готового ответа (его «судья» отсеял
+  // похожие, но не те), сравнение слов не подставляет: оно ошибается на тех же вопросах
+  if (!d) { const sl = gotovyy(q, ru); if (sl) d = sl; }
   if (!d || !d.answer || d.zapas) { const t = poTeme(q); if (t && t.answer !== (window.OBSHCHIY || {}).ans) d = t; else if (!d || !d.answer) d = t || { answer: "Please ask me about any part of IMIS.", screen: "intro", steps: [] }; }
   clearTimeout(tm);
   otvetPrishel = true; $("dumaet").classList.remove("on");

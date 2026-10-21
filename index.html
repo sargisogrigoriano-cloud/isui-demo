@@ -84,7 +84,7 @@ footer{text-align:center;color:var(--ink2);font-size:12px;padding:6px 0 20px}
 </main>
 <footer>IMIS · real system walkthrough · presenter recorded, assistant answers live</footer>
 <audio id="aud" playsinline preload="auto"></audio>
-<script src="qa_data.js?v=1792598071"></script>
+<script src="qa_data.js?v=1792603270"></script>
 <script>
 let micYazyk = "en";
 // Ассистентка: сначала туннель Cloudflare (как у Aquora — его не режут браузеры), запасной — ngrok.
@@ -128,7 +128,7 @@ const TEXTS = ["Hello, and welcome. This is IMIS — the Irrigation Management I
 const SAMPLES = ["How is a farmer's debt calculated?","How are water readings taken?","What does the Sentinel-2 check do?","How do complaints move up?","What does the link scheme show?","How is the water use plan built?"];
 const $ = (id) => document.getElementById(id);
 const scr = $("scr"), av = $("av"), aud = $("aud");
-let idx = -1, touring = false, gen = 0, sound = true;
+let idx = -1, touring = false, gen = 0, sound = true, naPauze = false;
 let yazOtveta = "en";   // язык текущего ответа ассистентки — по нему подписи экранов
 
 // главы
@@ -144,7 +144,7 @@ function showScreen(key) {
   scr.play().catch(() => {});
 }
 function markChip(i) { [...$("chapters").children].forEach((c, j) => { c.classList.toggle("on", j === i); if (j === i) c.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); }); $("num").textContent = (i + 1) + " / " + TITLES.length; }
-function stopAll() { gen++; const dm = document.getElementById("dumaet"); if (dm) dm.classList.remove("on"); try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
+function stopAll() { gen++; naPauze = false; const dm = document.getElementById("dumaet"); if (dm) dm.classList.remove("on"); try { av.pause(); } catch (e) {} try { aud.pause(); } catch (e) {} try { speechSynthesis.cancel(); } catch (e) {} }
 
 // разблокировать звук на телефонах (первое нажатие)
 let unlocked = false;
@@ -159,7 +159,7 @@ function clip(src, { loop = false } = {}) {
   });
 }
 async function play(i) {
-  stopAll(); const g = gen; idx = i;
+  stopAll(); naPauze = false; const g = gen; idx = i;
   markChip(i); showScreen(KEYS[i]); $("cap").textContent = TEXTS[i]; setState("Presenting");
   $("play").textContent = "⏸ Pause";
   await clip("presenter/" + (i + 1) + ".mp4");
@@ -170,7 +170,21 @@ async function play(i) {
 }
 $("fs").onclick = () => { const e = document.querySelector(".screen"); if (document.fullscreenElement) document.exitFullscreen(); else if (e.requestFullscreen) e.requestFullscreen(); else if (scr.webkitEnterFullscreen) scr.webkitEnterFullscreen(); };
 $("start").onclick = () => { unlock(); touring = true; play(0); };
-$("play").onclick = () => { unlock(); if (!av.paused && !av.loop) { stopAll(); touring = false; setState("Paused"); $("play").textContent = "▶ Play"; return; } touring = true; play(Math.max(idx, 0)); };
+// Пауза — настоящая: ведущий и экран системы замирают на месте, «Play» продолжает с той же секунды
+// (прежде пауза останавливала тур, и «Play» начинал главу заново).
+$("play").onclick = () => {
+  unlock();
+  if (naPauze) {
+    naPauze = false; setState("Presenting"); $("play").textContent = "⏸ Pause";
+    av.play().catch(() => {}); scr.play().catch(() => {});
+    return;
+  }
+  if (!av.paused && !av.loop && idx >= 0) {
+    naPauze = true; av.pause(); scr.pause(); setState("Paused"); $("play").textContent = "▶ Play";
+    return;
+  }
+  touring = true; play(Math.max(idx, 0));
+};
 $("next").onclick = () => { unlock(); touring = false; play(Math.min(idx + 1, TITLES.length - 1)); };
 $("prev").onclick = () => { unlock(); touring = false; play(Math.max(idx - 1, 0)); };
 $("snd").onclick = () => { sound = !sound; av.muted = !sound; aud.muted = !sound; $("snd").textContent = sound ? "🔊" : "🔇"; };
